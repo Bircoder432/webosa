@@ -333,7 +333,7 @@ button:hover:not(:disabled) {
     filter: brightness(1.2);
 }
 
-/* Таблица */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -365,7 +365,6 @@ tr:hover td {
     background-color: rgba(99, 102, 241, 0.1);
 }
 
-/* Кнопка темы */
 .theme-toggle {
     position: fixed;
     top: 20px;
@@ -388,7 +387,7 @@ tr:hover td {
     filter: brightness(1.2);
 }
 
-/* Футтер */
+
 footer {
     text-align: center;
     margin-top: 40px;
