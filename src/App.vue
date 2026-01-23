@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <!-- Кнопка темы -->
         <button class="theme-toggle" @click="toggleTheme">
             {{ isDark ? "☀️" : "🌙" }}
         </button>
@@ -8,7 +7,6 @@
         <h1>Расписание колледжей</h1>
 
         <div class="selectors-card">
-            <!-- Колледж -->
             <div class="form-group">
                 <label>Колледж</label>
                 <select v-model="selectedCollege" @change="onCollegeChange">
@@ -22,8 +20,7 @@
                     </option>
                 </select>
             </div>
-
-            <!-- Кампус -->
+            
             <div class="form-group">
                 <label>Кампус</label>
                 <select
@@ -42,7 +39,6 @@
                 </select>
             </div>
 
-            <!-- Группа -->
             <div class="form-group">
                 <label>Группа</label>
                 <select v-model="selectedGroup" :disabled="!groups.length">
@@ -57,7 +53,6 @@
                 </select>
             </div>
 
-            <!-- Дата -->
             <div class="form-group">
                 <label>Дата</label>
                 <input type="date" v-model="selectedDate" />
@@ -96,7 +91,6 @@
             Расписание пустое
         </div>
 
-        <!-- Футтер -->
         <footer>
             <b>
                 Сделанo с помощью
