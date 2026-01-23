@@ -1,9 +1,14 @@
 <template>
     <div class="container">
+        <!-- Кнопка темы -->
+        <button class="theme-toggle" @click="toggleTheme">
+            {{ isDark ? "☀️" : "🌙" }}
+        </button>
+
         <h1>Расписание колледжей</h1>
 
-        <!-- Селекторы -->
         <div class="selectors-card">
+            <!-- Колледж -->
             <div class="form-group">
                 <label>Колледж</label>
                 <select v-model="selectedCollege" @change="onCollegeChange">
@@ -18,6 +23,7 @@
                 </select>
             </div>
 
+            <!-- Кампус -->
             <div class="form-group">
                 <label>Кампус</label>
                 <select
@@ -36,6 +42,7 @@
                 </select>
             </div>
 
+            <!-- Группа -->
             <div class="form-group">
                 <label>Группа</label>
                 <select v-model="selectedGroup" :disabled="!groups.length">
@@ -50,6 +57,7 @@
                 </select>
             </div>
 
+            <!-- Дата -->
             <div class="form-group">
                 <label>Дата</label>
                 <input type="date" v-model="selectedDate" />
@@ -60,7 +68,6 @@
             </button>
         </div>
 
-        <!-- Расписание -->
         <div v-if="schedule.length" class="schedule-card">
             <h2>
                 Расписание группы {{ selectedGroupName }} на {{ formattedDate }}
@@ -88,6 +95,18 @@
         <div v-else-if="selectedGroup" class="empty-schedule">
             Расписание пустое
         </div>
+
+        <!-- Футтер -->
+        <footer>
+            <b>
+                Сделанo с помощью
+                <a
+                    href="https://github.com/ThisIsHyum/OpenScheduleApi"
+                    target="_blank"
+                    >OpenScheduleApi</a
+                >
+            </b>
+        </footer>
     </div>
 </template>
 
@@ -95,7 +114,6 @@
 import axios from "axios";
 
 export default {
-    name: "App",
     data() {
         return {
             colleges: [],
@@ -105,7 +123,8 @@ export default {
             selectedCollege: "",
             selectedCampus: "",
             selectedGroup: "",
-            selectedDate: new Date().toISOString().slice(0, 10), // по умолчанию сегодня
+            selectedDate: new Date().toISOString().slice(0, 10),
+            isDark: true,
         };
     },
     computed: {
@@ -116,15 +135,30 @@ export default {
             return g ? g.name : "";
         },
         formattedDate() {
-            return this.selectedDate
-                ? new Date(this.selectedDate).toLocaleDateString()
-                : "";
+            if (!this.selectedDate) return "";
+            const [year, month, day] = this.selectedDate.split("-");
+            return `${day}.${month}.${year}`;
+        },
+        apiDate() {
+            if (!this.selectedDate) return "";
+            const [year, month, day] = this.selectedDate.split("-");
+            return `${day}-${month}-${year}`;
+        },
+    },
+    watch: {
+        isDark(newVal) {
+            document.body.classList.toggle("dark", newVal);
+            document.body.classList.toggle("light", !newVal);
         },
     },
     mounted() {
+        document.body.classList.add(this.isDark ? "dark" : "light");
         this.fetchColleges();
     },
     methods: {
+        toggleTheme() {
+            this.isDark = !this.isDark;
+        },
         async fetchColleges() {
             try {
                 const res = await axios.get(
@@ -132,7 +166,7 @@ export default {
                 );
                 this.colleges = res.data;
             } catch (e) {
-                console.error("Ошибка при загрузке колледжей:", e);
+                console.error(e);
             }
         },
         async onCollegeChange() {
@@ -148,7 +182,7 @@ export default {
                 );
                 this.campuses = res.data;
             } catch (e) {
-                console.error("Ошибка при загрузке кампусов:", e);
+                console.error(e);
             }
         },
         async onCampusChange() {
@@ -162,30 +196,21 @@ export default {
                 );
                 this.groups = res.data;
             } catch (e) {
-                console.error("Ошибка при загрузке групп:", e);
+                console.error(e);
             }
         },
         async loadSchedule() {
             if (!this.selectedGroup) return;
-            this.schedule = [];
             try {
-                // Преобразуем дату в DD-MM-YYYY
-                const [year, month, day] = this.selectedDate.split("-");
-                const formattedDate = `${day}-${month}-${year}`;
-
                 const res = await axios.get(
                     `https://api.thisishyum.ru/schedule_api/tyumen/groups/${this.selectedGroup}/schedules`,
-                    {
-                        params: {
-                            date: formattedDate,
-                        },
-                    },
+                    { params: { date: this.apiDate } },
                 );
                 if (res.data.length && res.data[0].lessons) {
                     this.schedule = res.data[0].lessons;
                 }
             } catch (e) {
-                console.error("Ошибка при загрузке расписания:", e);
+                console.error(e);
             }
         },
     },
@@ -193,81 +218,116 @@ export default {
 </script>
 
 <style>
-body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f6fa;
+:root {
+    --bg-light: #f5f6fa;
+    --text-light: #1f2937;
+    --card-light: #fff;
+    --primary-light: #4f46e5;
+
+    --bg-dark: #12121e;
+    --text-dark: #f3f4f6;
+    --card-dark: #1e1e2e;
+    --primary-dark: #6366f1;
+}
+
+body,
+html {
     margin: 0;
     padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    transition:
+        background 0.3s,
+        color 0.3s;
+}
+
+body.light {
+    background-color: var(--bg-light);
+    color: var(--text-light);
+}
+
+body.dark {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
 }
 
 .container {
     max-width: 800px;
-    margin: 40px auto;
+    margin: 60px auto 40px;
     padding: 0 20px;
 }
 
 h1 {
     text-align: center;
     font-size: 2.5rem;
-    color: #4f46e5;
-    margin-bottom: 30px;
-}
-
-.selectors-card {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    margin-bottom: 30px;
-}
-
-.form-group {
     margin-bottom: 20px;
 }
 
-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: #374151;
+.selectors-card,
+.schedule-card {
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    transition:
+        background 0.3s,
+        color 0.3s,
+        box-shadow 0.3s;
 }
 
-select,
-input[type="date"] {
+body.light .selectors-card,
+body.light .schedule-card {
+    background-color: var(--card-light);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+body.dark .selectors-card,
+body.dark .schedule-card {
+    background-color: var(--card-dark);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+select {
     width: 100%;
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid #d1d5db;
     font-size: 1rem;
-    outline: none;
-    transition:
-        border 0.2s,
-        box-shadow 0.2s;
+    border: 1px solid #555;
+    background-color: inherit;
+    color: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-select:focus,
-input[type="date"]:focus {
-    border-color: #6366f1;
+select:focus {
+    outline: none;
+    border-color: var(--primary-dark);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-select:disabled,
-input[type="date"]:disabled {
-    background-color: #f3f4f6;
-    cursor: not-allowed;
+input[type="date"] {
+    width: 100%;
+    padding: 10px 0px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #555;
+    background-color: inherit;
+    color: inherit;
+    font-size: 1rem;
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    background-color: #4f46e5;
-    border: none;
+    padding: 10px 12px;
     border-radius: 8px;
+    border: none;
     cursor: pointer;
-    transition: background-color 0.2s;
+    background: linear-gradient(90deg, #4f46e5, #6366f1);
+    color: #fff;
+    font-weight: 600;
+    transition: all 0.3s;
 }
 
 button:disabled {
@@ -276,48 +336,77 @@ button:disabled {
 }
 
 button:hover:not(:disabled) {
-    background-color: #4338ca;
+    filter: brightness(1.2);
 }
 
-.schedule-card {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.schedule-card h2 {
-    font-size: 1.8rem;
-    color: #4f46e5;
-    margin-bottom: 20px;
-}
-
+/* Таблица */
 table {
     width: 100%;
     border-collapse: collapse;
+    transition: all 0.3s;
 }
 
 th,
 td {
-    text-align: left;
     padding: 12px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #444;
+    text-align: left;
 }
 
-th {
-    background-color: #e0e7ff;
+body.light th {
+    background: #e0e7ff;
     color: #3730a3;
-    font-weight: 600;
+}
+
+body.dark th {
+    background: #2a2a3a;
+    color: #c7d2fe;
+}
+
+body.dark td {
+    border-color: #555;
 }
 
 tr:hover td {
-    background-color: #f0f4ff;
+    background-color: rgba(99, 102, 241, 0.1);
 }
 
-.empty-schedule {
+/* Кнопка темы */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* Футтер */
+footer {
     text-align: center;
-    color: #6b7280;
-    font-size: 1.1rem;
-    margin-top: 15px;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: var(--primary-dark);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
 }
 </style>
