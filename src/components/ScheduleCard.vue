@@ -1,5 +1,9 @@
 <template>
-    <div class="schedule-card" :class="{ 'light-theme': isLight }">
+    <div
+        class="schedule-card"
+        :class="{ 'light-theme': isLight }"
+        ref="scheduleCard"
+    >
         <div class="schedule-header">
             <div class="schedule-info">
                 <h2>
@@ -10,9 +14,18 @@
                     {{ date }}
                 </div>
             </div>
-            <div class="lessons-count">
-                {{ lessons.length }}
-                {{ pluralize(lessons.length, "пара", "пары", "пар") }}
+            <div class="header-actions">
+                <div class="lessons-count">
+                    {{ lessons.length }}
+                    {{ pluralize(lessons.length, "пара", "пары", "пар") }}
+                </div>
+                <button
+                    class="export-btn"
+                    @click="exportToImage"
+                    title="Сохранить как картинку"
+                >
+                    <span>💾</span>
+                </button>
             </div>
         </div>
 
@@ -29,6 +42,7 @@
 
 <script>
 import LessonCard from "./LessonCard.vue";
+import html2canvas from "html2canvas";
 
 export default {
     name: "ScheduleCard",
@@ -55,7 +69,6 @@ export default {
         };
     },
     mounted() {
-        // Слушаем изменения темы
         this.themeObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.attributeName === "class") {
@@ -81,6 +94,75 @@ export default {
                 return few;
             return many;
         },
+        async exportToImage() {
+            const element = this.$refs.scheduleCard;
+            if (!element) return;
+
+            try {
+                // Показываем loader
+                const btn = element.querySelector(".export-btn");
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "<span>⏳</span>";
+                btn.disabled = true;
+
+                // ИСПРАВЛЕНИЕ: Ждем полной отрисовки всех анимаций
+                // Анимация slideIn длится 0.5s, плюс задержки между карточками
+                const lastIndex = this.lessons.length - 1;
+                const totalAnimationTime = 500 + lastIndex * 100 + 200; // 200ms запас
+
+                await new Promise((resolve) =>
+                    setTimeout(resolve, totalAnimationTime),
+                );
+
+                // Дополнительно форсируем стили для финального состояния анимаций
+                const lessonCards = element.querySelectorAll(".lesson-card");
+                lessonCards.forEach((card, index) => {
+                    card.style.animation = "none";
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                });
+
+                const canvas = await html2canvas(element, {
+                    backgroundColor: this.isLight ? "#ffffff" : "#1e293b",
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    onclone: (clonedDoc) => {
+                        // Убираем кнопку экспорта
+                        const exportBtn =
+                            clonedDoc.querySelector(".export-btn");
+                        if (exportBtn) {
+                            exportBtn.style.display = "none";
+                        }
+
+                        // ИСПРАВЛЕНИЕ: Принудительно устанавливаем финальное состояние анимаций
+                        const cards =
+                            clonedDoc.querySelectorAll(".lesson-card");
+                        cards.forEach((card) => {
+                            card.style.animation = "none";
+                            card.style.opacity = "1";
+                            card.style.transform = "translateY(0)";
+                            card.style.boxShadow = "none";
+                        });
+                    },
+                });
+
+                // Скачиваем
+                const link = document.createElement("a");
+                const fileName = `расписание_${this.groupName}_${this.date.replace(/\./g, "-")}.png`;
+                link.download = fileName;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+
+                // Восстанавливаем кнопку
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            } catch (error) {
+                console.error("Ошибка экспорта:", error);
+                alert("Не удалось сохранить расписание");
+            }
+        },
     },
 };
 </script>
@@ -93,7 +175,7 @@ export default {
     transition: all 0.3s ease;
     position: relative;
 
-    /* Темная тема (по умолчанию) */
+    /* Темная тема */
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
@@ -185,6 +267,12 @@ export default {
     font-size: 1rem;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .lessons-count {
     padding: 8px 16px;
     border-radius: 12px;
@@ -198,6 +286,37 @@ export default {
 .light-theme .lessons-count {
     background: rgba(16, 185, 129, 0.1);
     color: #059669;
+}
+
+/* Кнопка экспорта */
+.export-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+}
+
+.light-theme .export-btn {
+    background: rgba(99, 102, 241, 0.1);
+    color: #4f46e5;
+}
+
+.export-btn:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.3);
+    transform: scale(1.1);
+}
+
+.export-btn:disabled {
+    opacity: 0.5;
+    cursor: wait;
 }
 
 .schedule-timeline {
@@ -215,6 +334,11 @@ export default {
     .schedule-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
     }
 
     .group-badge {
