@@ -1,0 +1,36 @@
+:root {
+    --primary: #6366f1;
+    --primary-light: #818cf8;
+    --primary-dark: #4f46e5;
+    --primary-glow: rgba(99, 102, 241, 0.3);
+
+    --bg-dark: #0f172a;
+    --bg-dark-2: #1e293b;
+    --card-dark: rgba(30, 41, 59, 0.8);
+    --border-dark: rgba(255, 255, 255, 0.1);
+    --text-dark: #f1f5f9;
+    --text-dark-muted: #94a3b8;
+    --hover-dark: rgba(255, 255, 255, 0.05);
+
+    --bg-light: #f8fafc;
+    --bg-light-2: #f1f5f9;
+    --card-light: rgba(255, 255, 255, 0.95);
+    --border-light: rgba(0, 0, 0, 0.08);
+    --text-light: #1e293b;
+    --text-light-muted: #64748b;
+    --hover-light: rgba(0, 0, 0, 0.03);
+
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg:
+        0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.25);
+    --shadow-dropdown:
+        0 20px 25px -5px rgba(0, 0, 0, 0.15),
+        0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}

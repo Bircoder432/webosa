@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+    --primary: #6366f1;
+    --primary-light: #818cf8;
+    --primary-dark: #4f46e5;
+
+    --bg-dark: #0f172a;
+    --bg-dark-2: #1e293b;
+    --card-dark: #1e293b;
+    --border-dark: rgba(255, 255, 255, 0.1);
+    --text-dark: #f1f5f9;
+    --text-dark-muted: #94a3b8;
+
+    --bg-light: #f8fafc;
+    --bg-light-2: #f1f5f9;
+    --card-light: #ffffff;
+    --border-light: rgba(0, 0, 0, 0.08);
+    --text-light: #1e293b;
+    --text-light-muted: #64748b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+body {
+    margin: 0;
+    font-family:
+        "Inter",
+        system-ui,
+        -apple-system,
+        sans-serif;
+    min-height: 100vh;
+
+    /* Плавные переходы для всех свойств */
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+body.dark {
+    background: linear-gradient(135deg, #0f172a 0%, #1a1f2e 50%, #0f172a 100%);
+    background-attachment: fixed;
+    color: #f1f5f9;
+}
+
+body.light {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+    background-attachment: fixed;
+    color: #1e293b;
+}
+
+/* Глобальные переходы для всех элементов */
+*,
+*::before,
+*::after {
+    transition-property:
+        background-color, border-color, color, box-shadow, transform;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+body.light ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6366f1;
+}
+
+/* Animations */
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
