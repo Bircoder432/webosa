@@ -7,10 +7,7 @@
             <div class="form-grid">
                 <!-- College -->
                 <div class="form-group">
-                    <label>
-                        <span class="label-icon">🏛️</span>
-                        Колледж
-                    </label>
+                    <label> Колледж </label>
                     <CustomDropdown
                         v-model="selectedCollege"
                         :items="colleges"
@@ -23,10 +20,7 @@
 
                 <!-- Campus -->
                 <div class="form-group">
-                    <label>
-                        <span class="label-icon">🏢</span>
-                        Корпус
-                    </label>
+                    <label> Корпус </label>
                     <CustomDropdown
                         v-model="selectedCampus"
                         :items="campuses"
@@ -40,10 +34,7 @@
 
                 <!-- Group -->
                 <div class="form-group">
-                    <label>
-                        <span class="label-icon">👥</span>
-                        Группа
-                    </label>
+                    <label> Группа </label>
                     <CustomDropdown
                         v-model="selectedGroup"
                         :items="groups"
@@ -56,10 +47,7 @@
 
                 <!-- Date -->
                 <div class="form-group">
-                    <label>
-                        <span class="label-icon">📅</span>
-                        Дата
-                    </label>
+                    <label> Дата </label>
                     <CustomDatepicker v-model="selectedDate" />
                 </div>
             </div>

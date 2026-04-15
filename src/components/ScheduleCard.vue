@@ -7,10 +7,9 @@
         <div class="schedule-header">
             <div class="schedule-info">
                 <h2>
-                    <span class="group-badge">👥 {{ groupName }}</span>
+                    <span class="group-badge">{{ groupName }}</span>
                 </h2>
                 <div class="date-badge">
-                    <span class="calendar-icon">📆</span>
                     {{ date }}
                 </div>
             </div>
@@ -24,7 +23,7 @@
                     @click="exportToImage"
                     title="Сохранить как картинку"
                 >
-                    <span>💾</span>
+                    <span>PNG</span>
                 </button>
             </div>
         </div>
