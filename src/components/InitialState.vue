@@ -1,6 +1,6 @@
 <template>
     <div class="initial-state" :class="{ 'light-theme': isLight }">
-        <div class="initial-icon">🎓</div>
+        <div class="initial-icon">X</div>
         <p>Выберите колледж, корпус и группу для просмотра расписания</p>
     </div>
 </template>
