@@ -1,0 +1,12 @@
+<!-- public/favicon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Верхняя пластина (ромб) -->
+  <polygon points="3,11 16,3 29,11 16,19" fill="#00ff00"/>
+
+  <!-- Тулья (основа шапки) -->
+  <path d="M7 14 V22 C7 24.5 25 24.5 25 22 V14 Z" fill="#00ff00"/>
+
+  <!-- Кисточка -->
+  <line x1="29" y1="11" x2="29" y2="21" stroke="#00ff00" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <circle cx="29" cy="21" r="1.5" fill="#00ff00"/>
+</svg>
