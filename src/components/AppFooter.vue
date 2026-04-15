@@ -18,6 +18,7 @@
             >
                 [source]
             </a>
+            <span class="divider">|</span>
             <a href="https://vstor-tech.ru" target="_blank" class="footer-link">
                 [vstor-tech]
             </a>
