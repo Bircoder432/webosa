@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <ThemeToggle :isDark="isDark" @toggle="toggleTheme" />
+        <!-- <ThemeToggle :isDark="isDark" @toggle="toggleTheme" /> -->
         <AppHeader />
 
         <!-- Selectors Card -->
@@ -164,12 +164,15 @@ export default {
         });
 
         onMounted(() => {
-            const savedTheme = localStorage.getItem("theme");
+            const saved = localStorage.getItem("theme");
             const prefersDark = window.matchMedia(
                 "(prefers-color-scheme: dark)",
             ).matches;
+            // ПО УМОЛЧАНИЮ ТЁМНАЯ, если не сохранено явно светлая
+            const isDark = saved === "light" ? false : true;
 
-            isDark.value = savedTheme ? savedTheme === "dark" : prefersDark;
+            document.documentElement.classList.remove("light");
+            if (!isDark) document.documentElement.classList.add("light");
             applyTheme(isDark.value);
 
             fetchColleges();
@@ -208,157 +211,87 @@ export default {
 
 <style scoped>
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 1.5rem 1rem;
     position: relative;
+    font-family: var(--font-mono);
 }
-
 .selectors-card {
-    border-radius: 24px;
-    padding: 28px;
-    margin-bottom: 24px;
-    position: relative;
-    z-index: 100;
-
-    /* Темная тема */
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 8px 10px -6px rgba(0, 0, 0, 0.2);
-
-    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
 }
-
-/* Светлая тема */
-.selectors-card.light-theme {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
-
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.35rem;
 }
-
 label {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+    font-weight: 400;
     display: flex;
     align-items: center;
-    gap: 6px;
-    color: #94a3b8;
-    transition: color 0.3s ease;
+    gap: 0.25rem;
 }
-
-.light-theme label {
-    color: #64748b;
-}
-
 .label-icon {
-    font-size: 1rem;
+    margin-right: 0.25rem;
+    opacity: 0.8;
+    font-size: 0.9rem;
 }
-
 .load-btn {
     width: 100%;
-    padding: 14px 24px;
-    border-radius: 14px;
-    border: none;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    color: white;
-    background: linear-gradient(135deg, #6366f1, #818cf8);
-    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    position: relative;
-    overflow: hidden;
+    gap: 0.5rem;
+    transition: all var(--transition-fast);
+    text-transform: lowercase;
 }
-
 .load-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    transition: left 0.5s ease;
+    content: ">";
+    color: var(--accent);
+    margin-right: 0.5rem;
 }
-
-.load-btn:hover:not(:disabled)::before {
-    left: 100%;
-}
-
 .load-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 0 30px rgba(99, 102, 241, 0.25);
+    border-color: var(--accent);
+    color: var(--accent);
 }
-
 .load-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.4;
     cursor: not-allowed;
-    filter: grayscale(0.5);
 }
-
 .load-btn.loading {
     cursor: wait;
 }
-
-.btn-icon {
-    font-size: 1.1rem;
-}
-
 .spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
-
 @keyframes spin {
     to {
         transform: rotate(360deg);
-    }
-}
-
-@media (max-width: 600px) {
-    .container {
-        padding: 20px 16px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    .selectors-card {
-        padding: 20px;
-        border-radius: 20px;
     }
 }
 </style>

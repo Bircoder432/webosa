@@ -169,181 +169,100 @@ export default {
 
 <style scoped>
 .schedule-card {
-    border-radius: 24px;
-    padding: 28px;
-    margin-bottom: 24px;
-    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
     position: relative;
-
-    /* Темная тема */
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    font-family: var(--font-mono);
 }
-
-/* Светлая тема */
-.schedule-card.light-theme {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-
 .schedule-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: border-color 0.3s ease;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
 }
-
-.light-theme .schedule-header {
-    border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-
 .schedule-info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
 }
-
 .schedule-info h2 {
     margin: 0;
 }
-
-/* Крупное и красивое название группы */
 .group-badge {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-primary);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    border-radius: 16px;
-    font-weight: 700;
-    font-size: 1.4rem;
-    background: linear-gradient(
-        135deg,
-        rgba(99, 102, 241, 0.2),
-        rgba(129, 140, 248, 0.15)
-    );
-    color: #818cf8;
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.15);
-    transition: all 0.3s ease;
+    gap: 0.5rem;
 }
-
-.light-theme .group-badge {
-    background: linear-gradient(
-        135deg,
-        rgba(99, 102, 241, 0.1),
-        rgba(129, 140, 248, 0.08)
-    );
-    color: #4f46e5;
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+.group-badge::before {
+    content: "[group]";
+    color: var(--accent);
+    text-transform: lowercase;
+    font-size: 0.85rem;
+    margin-right: 0.35rem;
 }
-
 .date-badge {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #94a3b8;
-    transition: color 0.3s ease;
+    gap: 0.35rem;
 }
-
-.light-theme .date-badge {
-    color: #64748b;
+.date-badge::before {
+    content: "[date]";
+    color: var(--accent);
+    text-transform: lowercase;
+    font-size: 0.75rem;
+    margin-right: 0.35rem;
 }
-
-.calendar-icon {
-    font-size: 1rem;
-}
-
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 1rem;
 }
-
 .lessons-count {
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
-    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
 }
-
-.light-theme .lessons-count {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
+.lessons-count::before {
+    content: "[count]";
+    color: var(--accent);
+    text-transform: lowercase;
+    margin-right: 0.25rem;
 }
-
-/* Кнопка экспорта */
 .export-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
     cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    transition: all 0.2s ease;
 }
-
-.light-theme .export-btn {
-    background: rgba(99, 102, 241, 0.1);
-    color: #4f46e5;
-}
-
 .export-btn:hover:not(:disabled) {
-    background: rgba(99, 102, 241, 0.3);
-    transform: scale(1.1);
+    border-color: var(--accent);
+    color: var(--accent);
 }
-
 .export-btn:disabled {
-    opacity: 0.5;
-    cursor: wait;
+    opacity: 0.4;
+    cursor: not-allowed;
 }
-
 .schedule-timeline {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-}
-
-@media (max-width: 600px) {
-    .schedule-card {
-        padding: 20px;
-        border-radius: 20px;
-    }
-
-    .schedule-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-actions {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .group-badge {
-        font-size: 1.2rem;
-        padding: 10px 16px;
-    }
+    gap: 0.75rem;
 }
 </style>

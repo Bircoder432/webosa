@@ -2,12 +2,54 @@
     <button
         class="theme-toggle"
         @click="toggle"
-        :title="isDark ? 'Светлая тема' : 'Тёмная тема'"
+        :title="isDark ? 'light_mode' : 'dark_mode'"
     >
-        <span class="theme-icon">{{ isDark ? "☀️" : "🌙" }}</span>
+        <span class="prompt">></span>
+        <span class="theme-label text-lowercase">{{
+            isDark ? "dark" : "light"
+        }}</span>
     </button>
 </template>
 
+<style scoped>
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all var(--transition-fast);
+    z-index: 1000;
+    text-transform: lowercase;
+}
+.theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.theme-icon {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+@media (max-width: 600px) {
+    .theme-toggle {
+        top: 0.75rem;
+        right: 0.75rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    .theme-label {
+        display: none;
+    }
+}
+</style>
 <script>
 export default {
     name: "ThemeToggle",
@@ -22,50 +64,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    background: linear-gradient(135deg, #6366f1, #818cf8);
-    color: white;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 0 30px rgba(99, 102, 241, 0.25);
-    transition: all 0.3s ease;
-    z-index: 10000;
-}
-
-.theme-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
-}
-
-.theme-icon {
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-.theme-toggle:hover .theme-icon {
-    transform: scale(1.2);
-}
-
-@media (max-width: 600px) {
-    .theme-toggle {
-        top: 16px;
-        right: 16px;
-        width: 44px;
-        height: 44px;
-        font-size: 1.25rem;
-    }
-}
-</style>

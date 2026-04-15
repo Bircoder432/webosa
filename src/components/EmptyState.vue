@@ -47,55 +47,38 @@ export default {
 </script>
 <style scoped>
 .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    border-radius: 24px;
-    margin-bottom: 24px;
-
-    /* Темная тема */
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 8px 10px -6px rgba(0, 0, 0, 0.2);
-
-    transition: all 0.3s ease;
+    text-align: left;
+    padding: 2rem 1.5rem;
+    border: 1px dashed var(--border);
+    background: var(--bg-card);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
 }
-
-/* Светлая тема */
-.empty-state.light-theme {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-
 .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 16px;
-    opacity: 0.8;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    display: inline-block;
 }
-
+.empty-icon::before {
+    content: "[ ";
+    color: var(--accent);
+    margin-right: 0.25rem;
+}
+.empty-icon::after {
+    content: " ]";
+    color: var(--accent);
+    margin-left: 0.25rem;
+}
 h3 {
-    margin: 0 0 8px 0;
-    font-size: 1.25rem;
-    color: #f1f5f9;
-    transition: color 0.3s ease;
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-primary);
 }
-
-.light-theme h3 {
-    color: #1e293b;
-}
-
 p {
     margin: 0;
-    opacity: 0.7;
-    color: #94a3b8;
-    transition: color 0.3s ease;
-}
-
-.light-theme p {
-    color: #64748b;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
 }
 </style>

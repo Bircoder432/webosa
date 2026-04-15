@@ -37,44 +37,33 @@ export default {
 
 <style scoped>
 .initial-state {
-    text-align: center;
-    padding: 60px 20px;
-    border-radius: 24px;
-    margin-bottom: 24px;
-
-    /* Темная тема */
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 8px 10px -6px rgba(0, 0, 0, 0.2);
-
-    transition: all 0.3s ease;
+    text-align: left;
+    padding: 2rem 1.5rem;
+    border: 1px dashed var(--border);
+    background: var(--bg-card);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
 }
-
-/* Светлая тема */
-.initial-state.light-theme {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-
 .initial-icon {
-    font-size: 4rem;
-    margin-bottom: 16px;
-    opacity: 0.8;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    display: inline-block;
 }
-
+.initial-icon::before {
+    content: "[ ";
+    color: var(--accent);
+    margin-right: 0.25rem;
+}
+.initial-icon::after {
+    content: " ]";
+    color: var(--accent);
+    margin-left: 0.25rem;
+}
 p {
     margin: 0;
-    opacity: 0.7;
-    color: #94a3b8;
-    transition: color 0.3s ease;
-}
-
-.light-theme p {
-    color: #64748b;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
 }
 </style>
