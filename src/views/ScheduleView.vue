@@ -1,10 +1,9 @@
 <template>
     <div class="container">
-        <!-- <ThemeToggle :isDark="isDark" @toggle="toggleTheme" /> -->
         <AppHeader />
 
         <!-- Selectors Card -->
-        <div class="selectors-card" :class="{ 'light-theme': isLight }">
+        <div class="selectors-card">
             <div class="form-grid">
                 <!-- College -->
                 <div class="form-group">
@@ -100,9 +99,8 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from "vue";
+import { onMounted } from "vue";
 import { useSchedule } from "../composables/useSchedule.js";
-import ThemeToggle from "../components/ThemeToggle.vue";
 import AppHeader from "../components/AppHeader.vue";
 import CustomDropdown from "../components/CustomDropdown.vue";
 import CustomDatepicker from "../components/CustomDatepicker.vue";
@@ -114,7 +112,6 @@ import AppFooter from "../components/AppFooter.vue";
 export default {
     name: "ScheduleView",
     components: {
-        ThemeToggle,
         AppHeader,
         CustomDropdown,
         CustomDatepicker,
@@ -124,8 +121,6 @@ export default {
         AppFooter,
     },
     setup() {
-        const isDark = ref(true);
-
         const {
             colleges,
             campuses,
@@ -146,47 +141,11 @@ export default {
             loadSchedule,
         } = useSchedule();
 
-        const isLight = computed(() => !isDark.value);
-
-        const applyTheme = (dark) => {
-            document.body.classList.remove("dark", "light");
-            document.body.classList.add(dark ? "dark" : "light");
-            localStorage.setItem("theme", dark ? "dark" : "light");
-        };
-
-        const toggleTheme = () => {
-            isDark.value = !isDark.value;
-            applyTheme(isDark.value);
-        };
-
-        watch(isDark, (newVal) => {
-            applyTheme(newVal);
-        });
-
         onMounted(() => {
-            const saved = localStorage.getItem("theme");
-            const prefersDark = window.matchMedia(
-                "(prefers-color-scheme: dark)",
-            ).matches;
-            // ПО УМОЛЧАНИЮ ТЁМНАЯ, если не сохранено явно светлая
-            const isDark = saved === "light" ? false : true;
-
-            document.documentElement.classList.remove("light");
-            if (!isDark) document.documentElement.classList.add("light");
-            applyTheme(isDark.value);
-
             fetchColleges();
-
-            document.addEventListener("keydown", (e) => {
-                if (e.key === "Escape") {
-                    document.dispatchEvent(new CustomEvent("close-dropdowns"));
-                }
-            });
         });
 
         return {
-            isDark,
-            isLight,
             colleges,
             campuses,
             groups,
@@ -200,7 +159,6 @@ export default {
             formattedDate,
             showSchedule,
             showEmptyState,
-            toggleTheme,
             onCollegeChange,
             onCampusChange,
             loadSchedule,
