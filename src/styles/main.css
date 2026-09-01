@@ -1,9 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-
 :root {
-    --primary: #6366f1;
-    --primary-light: #818cf8;
-    --primary-dark: #4f46e5;
+    --primary: #0B6DAC;
+    --primary-light: #21BADC;
+    --primary-dark: #0C94C8;
 
     --bg-dark: #0f172a;
     --bg-dark-2: #1e293b;
@@ -13,7 +11,7 @@
     --text-dark-muted: #94a3b8;
 
     --bg-light: #f8fafc;
-    --bg-light-2: #f1f5f9;
+    --bg-light-2: #E6E6E6;
     --card-light: #ffffff;
     --border-light: rgba(0, 0, 0, 0.08);
     --text-light: #1e293b;
@@ -32,11 +30,7 @@ html {
 
 body {
     margin: 0;
-    font-family:
-        "Inter",
-        system-ui,
-        -apple-system,
-        sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     min-height: 100vh;
 
     /* Плавные переходы для всех свойств */
@@ -52,7 +46,7 @@ body.dark {
 }
 
 body.light {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #E6E6E6 50%, #f1f5f9 100%);
     background-attachment: fixed;
     color: #1e293b;
 }
@@ -88,7 +82,7 @@ body.light ::-webkit-scrollbar-thumb {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #6366f1;
+    background: #0B6DAC;
 }
 
 /* Animations */

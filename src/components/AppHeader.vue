@@ -2,9 +2,8 @@
     <header class="app-header">
         <div class="logo">
             <div class="logo-icon">📚</div>
-            <h1>Расписание колледжей</h1>
+            <h1>Расписание ТКПСТ</h1>
         </div>
-        <p class="subtitle">Тюмень</p>
     </header>
 </template>
 
@@ -31,17 +30,10 @@ h1 {
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    background: linear-gradient(135deg, #0B6DAC, #21BADC);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-}
-
-.subtitle {
-    font-size: 1rem;
-    opacity: 0.7;
-    margin: 0;
-    font-weight: 500;
 }
 
 @media (max-width: 600px) {

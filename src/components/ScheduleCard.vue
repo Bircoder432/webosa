@@ -186,7 +186,7 @@ export default {
 /* Светлая тема */
 .schedule-card.light-theme {
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid #E6E6E6;
     box-shadow:
         0 10px 25px -5px rgba(0, 0, 0, 0.1),
         0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -205,7 +205,7 @@ export default {
 }
 
 .light-theme .schedule-header {
-    border-bottom-color: rgba(0, 0, 0, 0.08);
+    border-bottom-color: #E6E6E6;
 }
 
 .schedule-info {
@@ -229,24 +229,24 @@ export default {
     font-size: 1.4rem;
     background: linear-gradient(
         135deg,
-        rgba(99, 102, 241, 0.2),
-        rgba(129, 140, 248, 0.15)
+        rgba(11, 109, 172, 0.2),
+        rgba(33, 186, 220, 0.15)
     );
-    color: #818cf8;
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.15);
+    color: #21BADC;
+    border: 1px solid rgba(11, 109, 172, 0.3);
+    box-shadow: 0 4px 15px rgba(11, 109, 172, 0.15);
     transition: all 0.3s ease;
 }
 
 .light-theme .group-badge {
     background: linear-gradient(
         135deg,
-        rgba(99, 102, 241, 0.1),
-        rgba(129, 140, 248, 0.08)
+        rgba(11, 109, 172, 0.1),
+        rgba(33, 186, 220, 0.08)
     );
-    color: #4f46e5;
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+    color: #0B6DAC;
+    border: 1px solid rgba(11, 109, 172, 0.2);
+    box-shadow: 0 4px 15px rgba(11, 109, 172, 0.1);
 }
 
 .date-badge {
@@ -294,8 +294,8 @@ export default {
     height: 40px;
     border-radius: 10px;
     border: none;
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
+    background: rgba(11, 109, 172, 0.15);
+    color: #21BADC;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -305,12 +305,12 @@ export default {
 }
 
 .light-theme .export-btn {
-    background: rgba(99, 102, 241, 0.1);
-    color: #4f46e5;
+    background: rgba(11, 109, 172, 0.1);
+    color: #0B6DAC;
 }
 
 .export-btn:hover:not(:disabled) {
-    background: rgba(99, 102, 241, 0.3);
+    background: rgba(11, 109, 172, 0.3);
     transform: scale(1.1);
 }
 

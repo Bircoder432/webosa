@@ -22,6 +22,16 @@
             </a>
             <span class="divider" :class="{ 'light-theme': isLight }">•</span>
             <a
+                href="https://tkpst.ru"
+                target="_blank"
+                class="footer-link"
+                :class="{ 'light-theme': isLight }"
+            >
+                <span class="link-icon">🌐</span>
+                Сайт ТКПСТ
+            </a>
+            <span class="divider" :class="{ 'light-theme': isLight }">•</span>
+            <a
                 href="https://t.me/tkpst_podslushano"
                 target="_blank"
                 class="footer-link"
@@ -72,38 +82,38 @@ footer {
     border-radius: 12px;
 
     /* Темная тема */
-    background: rgba(99, 102, 241, 0.1);
-    color: #818cf8;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(11, 109, 172, 0.1);
+    color: #21BADC;
+    border: 1px solid rgba(11, 109, 172, 0.2);
 }
 
 /* Светлая тема */
 .footer-link.light-theme {
-    background: rgba(99, 102, 241, 0.08);
-    color: #4f46e5;
-    border: 1px solid rgba(99, 102, 241, 0.15);
+    background: rgba(11, 109, 172, 0.08);
+    color: #0B6DAC;
+    border: 1px solid rgba(11, 109, 172, 0.15);
 }
 
 /* Убираем фиолетовый цвет посещенных ссылок */
 .footer-link:visited {
-    color: #818cf8;
+    color: #21BADC;
 }
 
 .footer-link.light-theme:visited {
-    color: #4f46e5;
+    color: #0B6DAC;
 }
 
 .footer-link:hover {
-    background: rgba(99, 102, 241, 0.25);
-    color: #a5b4fc;
+    background: rgba(11, 109, 172, 0.25);
+    color: #0C94C8;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 4px 12px rgba(11, 109, 172, 0.2);
 }
 
 .footer-link.light-theme:hover {
-    background: rgba(99, 102, 241, 0.2);
-    color: #6366f1;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    background: rgba(11, 109, 172, 0.2);
+    color: #084E73;
+    box-shadow: 0 4px 12px rgba(11, 109, 172, 0.15);
 }
 
 .link-icon {

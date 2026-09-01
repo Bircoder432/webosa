@@ -6,22 +6,6 @@
         <!-- Selectors Card -->
         <div class="selectors-card" :class="{ 'light-theme': isLight }">
             <div class="form-grid">
-                <!-- College -->
-                <div class="form-group">
-                    <label>
-                        <span class="label-icon">🏛️</span>
-                        Колледж
-                    </label>
-                    <CustomDropdown
-                        v-model="selectedCollege"
-                        :items="colleges"
-                        placeholder="Выберите колледж"
-                        labelKey="name"
-                        valueKey="collegeId"
-                        @change="onCollegeChange"
-                    />
-                </div>
-
                 <!-- Campus -->
                 <div class="form-group">
                     <label>
@@ -127,11 +111,9 @@ export default {
         const isDark = ref(true);
 
         const {
-            colleges,
             campuses,
             groups,
             schedule,
-            selectedCollege,
             selectedCampus,
             selectedGroup,
             selectedDate,
@@ -140,8 +122,7 @@ export default {
             formattedDate,
             showSchedule,
             showEmptyState,
-            fetchColleges,
-            onCollegeChange,
+            initializeCampuses,
             onCampusChange,
             loadSchedule,
         } = useSchedule();
@@ -172,7 +153,8 @@ export default {
             isDark.value = savedTheme ? savedTheme === "dark" : prefersDark;
             applyTheme(isDark.value);
 
-            fetchColleges();
+            // Автоматически подгружаем корпуса для TKPST
+            initializeCampuses();
 
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") {
@@ -184,11 +166,9 @@ export default {
         return {
             isDark,
             isLight,
-            colleges,
             campuses,
             groups,
             schedule,
-            selectedCollege,
             selectedCampus,
             selectedGroup,
             selectedDate,
@@ -198,7 +178,6 @@ export default {
             showSchedule,
             showEmptyState,
             toggleTheme,
-            onCollegeChange,
             onCampusChange,
             loadSchedule,
         };
@@ -234,7 +213,7 @@ export default {
 /* Светлая тема */
 .selectors-card.light-theme {
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid #E6E6E6;
     box-shadow:
         0 10px 25px -5px rgba(0, 0, 0, 0.1),
         0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -278,9 +257,10 @@ label {
     border: none;
     cursor: pointer;
     font-weight: 600;
+    font-family: inherit;
     font-size: 1rem;
     color: white;
-    background: linear-gradient(135deg, #6366f1, #818cf8);
+    background: linear-gradient(135deg, #0B6DAC, #21BADC);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -314,7 +294,7 @@ label {
     transform: translateY(-2px);
     box-shadow:
         0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 0 30px rgba(99, 102, 241, 0.25);
+        0 0 30px rgba(11, 109, 172, 0.25);
 }
 
 .load-btn:disabled {

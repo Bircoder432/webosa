@@ -126,16 +126,16 @@ export default {
 .light-theme .dropdown-trigger {
     background: #ffffff;
     color: #1e293b;
-    border-color: rgba(0, 0, 0, 0.08);
+    border-color: #E6E6E6;
 }
 
 .dropdown-trigger:hover:not(.disabled) {
-    border-color: #818cf8;
+    border-color: #21BADC;
 }
 
 .custom-dropdown.active .dropdown-trigger {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    border-color: #0B6DAC;
+    box-shadow: 0 0 0 3px rgba(11, 109, 172, 0.15);
 }
 
 .dropdown-trigger.disabled {
@@ -178,7 +178,7 @@ export default {
 /* Светлая тема */
 .light-theme .dropdown-menu {
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid #E6E6E6;
     box-shadow:
         0 20px 25px -5px rgba(0, 0, 0, 0.15),
         0 10px 10px -5px rgba(0, 0, 0, 0.1);
@@ -194,7 +194,7 @@ export default {
 }
 
 .light-theme .dropdown-item {
-    border-bottom-color: rgba(0, 0, 0, 0.05);
+    border-bottom-color: #f1f5f9;
     color: #1e293b;
 }
 
@@ -211,7 +211,7 @@ export default {
 }
 
 .dropdown-item.active {
-    background: linear-gradient(135deg, #6366f1, #818cf8) !important;
+    background: linear-gradient(135deg, #0B6DAC, #21BADC) !important;
     color: white;
     font-weight: 600;
 }
@@ -233,6 +233,6 @@ export default {
 
 .dropdown-menu::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    background: #6366f1;
+    background: #0B6DAC;
 }
 </style>

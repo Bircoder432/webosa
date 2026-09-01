@@ -14,20 +14,16 @@ export function useSchedule() {
   const campuses = ref([]);
   const groups = ref([]);
   const schedule = ref([]);
-  const selectedCollege = ref("");
+
+  // Установлен колледж TKPST с ID 1 по умолчанию
+  const selectedCollege = ref(1);
   const selectedCampus = ref("");
   const selectedGroup = ref("");
   const selectedDate = ref(getTodayString());
-  // ИСПРАВЛЕНИЕ: Отдельная дата для отображения на карточке
   const displayDate = ref(getTodayString());
   const scheduleLoaded = ref(false);
   const isLoading = ref(false);
   const hasError = ref(false);
-
-  const selectedCollegeName = computed(() => {
-    const c = colleges.value.find((x) => x.collegeId === selectedCollege.value);
-    return c ? c.name : "";
-  });
 
   const selectedCampusName = computed(() => {
     const c = campuses.value.find((x) => x.campusId === selectedCampus.value);
@@ -42,14 +38,12 @@ export function useSchedule() {
   });
 
   const formattedDate = computed(() => {
-    // ИСПРАВЛЕНИЕ: Используем displayDate для отображения
     if (!displayDate.value) return "";
     const [y, m, d] = displayDate.value.split("-");
     return `${d}.${m}.${y}`;
   });
 
   const apiDate = computed(() => {
-    // ИСПРАВЛЕНИЕ: Используем selectedDate для API
     if (!selectedDate.value) return "";
     const [y, m, d] = selectedDate.value.split("-");
     return `${d}-${m}-${y}`;
@@ -77,31 +71,11 @@ export function useSchedule() {
     return many;
   };
 
-  const fetchColleges = async () => {
+  // Автоматическая загрузка корпусов для TKPST (ID 1)
+  const initializeCampuses = async () => {
     try {
       const res = await axios.get(
-        "https://api.thisishyum.ru/schedule_api/tyumen/colleges",
-      );
-      colleges.value = res.data;
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const onCollegeChange = async () => {
-    selectedCampus.value = "";
-    selectedGroup.value = "";
-    campuses.value = [];
-    groups.value = [];
-    schedule.value = [];
-    scheduleLoaded.value = false;
-    hasError.value = false;
-
-    if (!selectedCollege.value) return;
-
-    try {
-      const res = await axios.get(
-        `https://api.thisishyum.ru/schedule_api/tyumen/colleges/${selectedCollege.value}/campuses`,
+        `https://api.thisishyum.ru/schedule_api/tyumen/colleges/1/campuses`,
       );
       campuses.value = res.data;
     } catch (e) {
@@ -136,18 +110,9 @@ export function useSchedule() {
     scheduleLoaded.value = false;
     hasError.value = false;
 
-    // Лог для отладки
-    console.log("Loading schedule for date:", selectedDate.value);
-    console.log("API date format:", apiDate.value);
-
     try {
-      // ИСПРАВЛЕНИЕ: Явно включаем дату в URL вместо params
       const url = `https://api.thisishyum.ru/schedule_api/tyumen/groups/${selectedGroup.value}/schedules?date=${apiDate.value}`;
-      console.log("Request URL:", url);
-
       const res = await axios.get(url);
-
-      console.log("Response:", res.data);
 
       scheduleLoaded.value = true;
       hasError.value = false;
@@ -182,7 +147,6 @@ export function useSchedule() {
     scheduleLoaded,
     isLoading,
     hasError,
-    selectedCollegeName,
     selectedCampusName,
     selectedGroupName,
     formattedDate,
@@ -190,8 +154,7 @@ export function useSchedule() {
     showSchedule,
     showEmptyState,
     pluralize,
-    fetchColleges,
-    onCollegeChange,
+    initializeCampuses,
     onCampusChange,
     loadSchedule,
   };

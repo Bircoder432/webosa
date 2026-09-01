@@ -65,7 +65,7 @@ export default {
 /* Светлая тема */
 .empty-state.light-theme {
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid #E6E6E6;
     box-shadow:
         0 10px 25px -5px rgba(0, 0, 0, 0.1),
         0 8px 10px -6px rgba(0, 0, 0, 0.1);

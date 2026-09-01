@@ -33,7 +33,7 @@ export default {
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    background: linear-gradient(135deg, #6366f1, #818cf8);
+    background: linear-gradient(135deg, #0B6DAC, #21BADC);
     color: white;
     font-size: 1.5rem;
     display: flex;
@@ -41,7 +41,7 @@ export default {
     justify-content: center;
     box-shadow:
         0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 0 30px rgba(99, 102, 241, 0.25);
+        0 0 30px rgba(11, 109, 172, 0.25);
     transition: all 0.3s ease;
     z-index: 10000;
 }

@@ -313,16 +313,16 @@ export default {
 .light-theme .datepicker-trigger {
     background: #ffffff;
     color: #1e293b;
-    border-color: rgba(0, 0, 0, 0.08);
+    border-color: #E6E6E6;
 }
 
 .datepicker-trigger:hover {
-    border-color: #818cf8;
+    border-color: #21BADC;
 }
 
 .custom-datepicker.active .datepicker-trigger {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    border-color: #0B6DAC;
+    box-shadow: 0 0 0 3px rgba(11, 109, 172, 0.15);
 }
 
 .calendar-icon-trigger {
@@ -350,7 +350,7 @@ export default {
 /* Светлая тема */
 .light-theme .calendar-popup {
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid #E6E6E6;
     box-shadow:
         0 20px 25px -5px rgba(0, 0, 0, 0.15),
         0 10px 10px -5px rgba(0, 0, 0, 0.1);
@@ -365,7 +365,7 @@ export default {
 }
 
 .light-theme .calendar-header {
-    border-bottom-color: rgba(0, 0, 0, 0.08);
+    border-bottom-color: #E6E6E6;
 }
 
 .nav-btn {
@@ -388,7 +388,7 @@ export default {
 }
 
 .nav-btn:hover {
-    background: #6366f1;
+    background: #0B6DAC;
     color: white;
 }
 
@@ -449,7 +449,7 @@ export default {
 }
 
 .day-btn:hover:not(.other) {
-    background: #6366f1;
+    background: #0B6DAC;
     color: white;
 }
 
@@ -459,12 +459,12 @@ export default {
 }
 
 .day-btn.today {
-    border: 2px solid #6366f1;
+    border: 2px solid #0B6DAC;
     font-weight: 600;
 }
 
 .day-btn.selected {
-    background: linear-gradient(135deg, #6366f1, #818cf8);
+    background: linear-gradient(135deg, #0B6DAC, #21BADC);
     color: white;
     font-weight: 600;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -483,14 +483,14 @@ export default {
 }
 
 .light-theme .calendar-footer {
-    border-top-color: rgba(0, 0, 0, 0.08);
+    border-top-color: #E6E6E6;
 }
 
 .today-btn {
     padding: 8px 20px;
     border-radius: 8px;
     border: none;
-    background: #6366f1;
+    background: #0B6DAC;
     color: white;
     font-weight: 600;
     cursor: pointer;
@@ -498,7 +498,7 @@ export default {
 }
 
 .today-btn:hover {
-    background: #4f46e5;
+    background: #084E73;
     transform: translateY(-1px);
 }
 

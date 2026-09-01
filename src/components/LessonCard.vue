@@ -94,13 +94,13 @@ export default {
 /* Светлая тема */
 .lesson-card.light-theme {
     background: #f1f5f9;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid #E6E6E6;
 }
 
 .lesson-card:hover {
     transform: translateX(8px);
-    border-color: #6366f1;
-    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
+    border-color: #0B6DAC;
+    box-shadow: 0 10px 25px rgba(11, 109, 172, 0.15);
 }
 
 .lesson-number {
@@ -111,11 +111,11 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #6366f1, #818cf8);
+    background: linear-gradient(135deg, #0B6DAC, #21BADC);
     color: white;
     font-weight: 700;
     font-size: 1.1rem;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(11, 109, 172, 0.3);
 }
 
 .lesson-content {
@@ -139,13 +139,13 @@ export default {
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
+    background: rgba(11, 109, 172, 0.15);
+    color: #21BADC;
 }
 
 .light-theme .time-badge {
-    background: rgba(99, 102, 241, 0.1);
-    color: #4f46e5;
+    background: rgba(11, 109, 172, 0.1);
+    color: #0B6DAC;
 }
 
 .clock-icon {
