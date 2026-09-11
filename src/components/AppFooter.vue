@@ -30,16 +30,6 @@
                 <span class="link-icon">🌐</span>
                 Сайт ТКПСТ
             </a>
-            <span class="divider" :class="{ 'light-theme': isLight }">•</span>
-            <a
-                href="https://t.me/tkpst_podslushano"
-                target="_blank"
-                class="footer-link"
-                :class="{ 'light-theme': isLight }"
-            >
-                <span class="link-icon">🗣</span>
-                Подслушано ТКПСТ
-            </a>
         </div>
     </footer>
 </template>
