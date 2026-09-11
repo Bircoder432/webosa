@@ -1,5 +1,8 @@
+
 import { ref, computed } from "vue";
 import axios from "axios";
+
+const API_BASE_URL = "https://api.thisishyum.ru/schedule_api/tyumen";
 
 export function useSchedule() {
   const getTodayString = () => {
@@ -15,7 +18,7 @@ export function useSchedule() {
   const groups = ref([]);
   const schedule = ref([]);
 
-  // Установлен колледж TKPST с ID 1 по умолчанию
+  // TKPST college ID is 1 by default
   const selectedCollege = ref(1);
   const selectedCampus = ref("");
   const selectedGroup = ref("");
@@ -43,12 +46,6 @@ export function useSchedule() {
     return `${d}.${m}.${y}`;
   });
 
-  const apiDate = computed(() => {
-    if (!selectedDate.value) return "";
-    const [y, m, d] = selectedDate.value.split("-");
-    return `${d}-${m}-${y}`;
-  });
-
   const showSchedule = computed(() => {
     return (
       schedule.value.length > 0 && scheduleLoaded.value && !isLoading.value
@@ -71,11 +68,11 @@ export function useSchedule() {
     return many;
   };
 
-  // Автоматическая загрузка корпусов для TKPST (ID 1)
+  // GET /colleges/{collegeId}/campuses
   const initializeCampuses = async () => {
     try {
       const res = await axios.get(
-        `https://api.thisishyum.ru/schedule_api/tyumen/colleges/1/campuses`,
+        `${API_BASE_URL}/colleges/${selectedCollege.value}/campuses`,
       );
       campuses.value = res.data;
     } catch (e) {
@@ -83,6 +80,7 @@ export function useSchedule() {
     }
   };
 
+  // GET /campuses/{campusId}/groups
   const onCampusChange = async () => {
     selectedGroup.value = "";
     groups.value = [];
@@ -94,7 +92,7 @@ export function useSchedule() {
 
     try {
       const res = await axios.get(
-        `https://api.thisishyum.ru/schedule_api/tyumen/campuses/${selectedCampus.value}/groups`,
+        `${API_BASE_URL}/campuses/${selectedCampus.value}/groups`,
       );
       groups.value = res.data;
     } catch (e) {
@@ -102,6 +100,7 @@ export function useSchedule() {
     }
   };
 
+  // GET /groups/{groupId}/schedules?date=yyyy-mm-dd
   const loadSchedule = async () => {
     if (!selectedGroup.value) return;
 
@@ -111,7 +110,7 @@ export function useSchedule() {
     hasError.value = false;
 
     try {
-      const url = `https://api.thisishyum.ru/schedule_api/tyumen/groups/${selectedGroup.value}/schedules?date=${apiDate.value}`;
+      const url = `${API_BASE_URL}/groups/${selectedGroup.value}/schedules?date=${selectedDate.value}`;
       const res = await axios.get(url);
 
       scheduleLoaded.value = true;
@@ -150,7 +149,6 @@ export function useSchedule() {
     selectedCampusName,
     selectedGroupName,
     formattedDate,
-    apiDate,
     showSchedule,
     showEmptyState,
     pluralize,
