@@ -30,6 +30,7 @@
 
 <script>
 import clickOutside from "../directives/clickOutside.js";
+import { useTheme } from "../composables/useTheme.js";
 
 export default {
     name: "CustomDropdown",
@@ -62,10 +63,11 @@ export default {
             isOpen: false,
         };
     },
+    setup() {
+        const { isLight } = useTheme();
+        return { isLight };
+    },
     computed: {
-        isLight() {
-            return document.body.classList.contains("light");
-        },
         displayValue() {
             if (!this.modelValue) return "";
             const item = this.items.find(

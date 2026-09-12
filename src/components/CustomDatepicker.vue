@@ -44,6 +44,7 @@
 
 <script>
 import clickOutside from "../directives/clickOutside.js";
+import { useTheme } from "../composables/useTheme.js";
 
 export default {
     name: "CustomDatepicker",
@@ -63,6 +64,10 @@ export default {
         },
     },
     emits: ["update:modelValue"],
+    setup() {
+        const { isLight } = useTheme();
+        return { isLight };
+    },
     data() {
         return {
             showCalendar: false,
@@ -81,7 +86,6 @@ export default {
                 "Ноябрь",
                 "Декабрь",
             ],
-            isLight: document.body.classList.contains("light"),
         };
     },
     computed: {
@@ -179,25 +183,6 @@ export default {
 
             return days;
         },
-    },
-    mounted() {
-        this.themeObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === "class") {
-                    this.isLight = document.body.classList.contains("light");
-                }
-            });
-        });
-
-        this.themeObserver.observe(document.body, {
-            attributes: true,
-            attributeFilter: ["class"],
-        });
-    },
-    beforeUnmount() {
-        if (this.themeObserver) {
-            this.themeObserver.disconnect();
-        }
     },
     methods: {
         // ИСПРАВЛЕНИЕ: Парсим дату с полуднем

@@ -22,71 +22,81 @@
                 </button>
             </div>
 
-            <div v-if="mode === 'group'" class="form-grid">
-                <div class="form-group">
-                    <label>
-                        <span class="label-icon"><i class="ri-building-line"></i></span>
-                        Корпус
-                    </label>
-                    <CustomDropdown
-                        v-model="selectedCampus"
-                        :items="campuses"
-                        placeholder="Выберите корпус"
-                        labelKey="name"
-                        valueKey="campusId"
-                        :disabled="!campuses.length"
-                        @change="onCampusChange"
-                    />
+            <Transition name="mode-fade" mode="out-in">
+                <div
+                    v-if="mode === 'group'"
+                    key="group"
+                    class="form-grid"
+                >
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon"><i class="ri-building-line"></i></span>
+                            Корпус
+                        </label>
+                        <CustomDropdown
+                            v-model="selectedCampus"
+                            :items="campuses"
+                            placeholder="Выберите корпус"
+                            labelKey="name"
+                            valueKey="campusId"
+                            :disabled="!campuses.length"
+                            @change="onCampusChange"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon"><i class="ri-group-line"></i></span>
+                            Группа
+                        </label>
+                        <CustomDropdown
+                            v-model="selectedGroup"
+                            :items="groups"
+                            placeholder="Выберите группу"
+                            labelKey="name"
+                            valueKey="studentGroupId"
+                            :disabled="!groups.length"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
+                            Дата
+                        </label>
+                        <CustomDatepicker v-model="selectedDate" />
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>
-                        <span class="label-icon"><i class="ri-group-line"></i></span>
-                        Группа
-                    </label>
-                    <CustomDropdown
-                        v-model="selectedGroup"
-                        :items="groups"
-                        placeholder="Выберите группу"
-                        labelKey="name"
-                        valueKey="studentGroupId"
-                        :disabled="!groups.length"
-                    />
-                </div>
+                <div
+                    v-else
+                    key="teacher"
+                    class="form-grid"
+                >
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon"><i class="ri-user-line"></i></span>
+                            Преподаватель
+                        </label>
+                        <input
+                            type="text"
+                            class="teacher-input"
+                            :class="{ 'light-theme': isLight }"
+                            v-model="teacherName"
+                            placeholder="Введите фамилию преподавателя"
+                            @keydown.enter="loadTeacherSchedule"
+                        />
+                    </div>
 
-                <div class="form-group">
-                    <label>
-                        <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
-                        Дата
-                    </label>
-                    <CustomDatepicker v-model="selectedDate" />
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
+                            Дата
+                        </label>
+                        <CustomDatepicker v-model="selectedDate" />
+                    </div>
                 </div>
-            </div>
-
-            <div v-else class="form-grid">
-                <div class="form-group">
-                    <label>
-                        <span class="label-icon"><i class="ri-user-line"></i></span>
-                        Преподаватель
-                    </label>
-                    <input
-                        type="text"
-                        class="teacher-input"
-                        :class="{ 'light-theme': isLight }"
-                        v-model="teacherName"
-                        placeholder="Введите фамилию преподавателя"
-                        @keydown.enter="loadTeacherSchedule"
-                    />
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
-                        Дата
-                    </label>
-                    <CustomDatepicker v-model="selectedDate" />
-                </div>
-            </div>
+            </Transition>
 
             <button
                 class="load-btn"
@@ -141,8 +151,9 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useSchedule } from "../composables/useSchedule.js";
+import { useTheme } from "../composables/useTheme.js";
 import ThemeToggle from "../components/ThemeToggle.vue";
 import AppHeader from "../components/AppHeader.vue";
 import CustomDropdown from "../components/CustomDropdown.vue";
@@ -165,8 +176,9 @@ export default {
         AppFooter,
     },
     setup() {
-        const isDark = ref(true);
         const mode = ref("group");
+
+        const { isDark, isLight, toggleTheme, setTheme } = useTheme();
 
         const {
             campuses,
@@ -192,8 +204,6 @@ export default {
             loadTeacherSchedule,
         } = useSchedule();
 
-        const isLight = computed(() => !isDark.value);
-
         const isLoadDisabled = computed(() => {
             if (mode.value === "group") {
                 return !selectedGroup.value || isLoading.value;
@@ -207,24 +217,9 @@ export default {
                 : isTeacherLoading.value;
         });
 
-        const applyTheme = (dark) => {
-            document.body.classList.remove("dark", "light");
-            document.body.classList.add(dark ? "dark" : "light");
-            localStorage.setItem("theme", dark ? "dark" : "light");
-        };
-
-        const toggleTheme = () => {
-            isDark.value = !isDark.value;
-            applyTheme(isDark.value);
-        };
-
         const switchMode = (newMode) => {
             mode.value = newMode;
         };
-
-        watch(isDark, (newVal) => {
-            applyTheme(newVal);
-        });
 
         onMounted(() => {
             const savedTheme = localStorage.getItem("theme");
@@ -232,8 +227,7 @@ export default {
                 "(prefers-color-scheme: dark)",
             ).matches;
 
-            isDark.value = savedTheme ? savedTheme === "dark" : prefersDark;
-            applyTheme(isDark.value);
+            setTheme(savedTheme ? savedTheme === "dark" : prefersDark);
 
             initializeCampuses();
 
@@ -344,6 +338,10 @@ export default {
     color: #64748b;
 }
 
+.mode-tabs.light-theme .mode-tab.active {
+    color: white;
+}
+
 .mode-tab.active {
     background: linear-gradient(135deg, #0b6dac, #21badc);
     color: white;
@@ -356,6 +354,17 @@ export default {
 
 .mode-tabs.light-theme .mode-tab:hover:not(.active) {
     color: #1e293b;
+}
+
+.mode-fade-enter-active,
+.mode-fade-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mode-fade-enter-from,
+.mode-fade-leave-to {
+    opacity: 0;
+    transform: translateY(8px);
 }
 
 .form-grid {
