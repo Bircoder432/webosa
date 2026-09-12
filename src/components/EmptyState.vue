@@ -1,6 +1,6 @@
 <template>
     <div class="empty-state" :class="{ 'light-theme': isLight }">
-        <div class="empty-icon">📭</div>
+        <div class="empty-icon"><i class="ri-inbox-line"></i></div>
         <h3>{{ title }}</h3>
         <p>{{ subtitle }}</p>
     </div>

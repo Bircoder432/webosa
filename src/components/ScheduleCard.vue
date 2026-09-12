@@ -7,10 +7,10 @@
         <div class="schedule-header">
             <div class="schedule-info">
                 <h2>
-                    <span class="group-badge">👥 {{ groupName }}</span>
+                    <span class="group-badge"><i class="ri-group-line"></i> {{ groupName }}</span>
                 </h2>
                 <div class="date-badge">
-                    <span class="calendar-icon">📆</span>
+                    <span class="calendar-icon"><i class="ri-calendar-line"></i></span>
                     {{ date }}
                 </div>
             </div>
@@ -24,7 +24,7 @@
                     @click="exportToImage"
                     title="Сохранить как картинку"
                 >
-                    <span>💾</span>
+                    <span><i class="ri-save-line"></i></span>
                 </button>
             </div>
         </div>
@@ -42,8 +42,9 @@
                     class="break-indicator"
                     :class="{ 'light-theme': isLight, 'window-indicator': item.gapType === 'window' }"
                 >
-                    <span class="break-line" :class="{ 'window-line': item.gapType === 'window' }"></span>
+                     <span class="break-line" :class="{ 'window-line': item.gapType === 'window' }"></span>
                     <span class="break-text" :class="{ 'window-text': item.gapType === 'window' }">
+                        <i :class="item.icon" class="break-text-icon"></i>
                         {{ item.text }}
                     </span>
                     <span class="break-line" :class="{ 'window-line': item.gapType === 'window' }"></span>
@@ -97,14 +98,16 @@ export default {
                         result.push({
                             type: 'gap',
                             gapType: 'window',
-                            text: `🪟 Окно — ${duration} мин`
+                            icon: 'ri-window-line',
+                            text: `Окно — ${duration} мин`
                         });
                     }
                     else if (duration > 10) {
                         result.push({
                             type: 'gap',
                             gapType: 'break',
-                            text: `☕ Большая перемена — ${duration} мин`
+                            icon: 'ri-cup-line',
+                            text: `Большая перемена — ${duration} мин`
                         });
                     }
                 }
@@ -160,7 +163,7 @@ export default {
             try {
                 const btn = element.querySelector(".export-btn");
                 const originalText = btn.innerHTML;
-                btn.innerHTML = "<span>⏳</span>";
+                btn.innerHTML = "<i class='ri-loader-line ri-loader-animate'></i>";
                 btn.disabled = true;
 
                 const lastIndex = this.lessons.length - 1;
@@ -395,16 +398,21 @@ export default {
     border-radius: 2px;
 }
 
-.break-text {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #10b981;
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    padding: 4px 12px;
-    border-radius: 12px;
-    white-space: nowrap;
-}
+    .break-text {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        padding: 4px 12px;
+        border-radius: 12px;
+        white-space: nowrap;
+    }
+
+    .break-text-icon {
+        font-size: 1rem;
+        margin-right: 4px;
+    }
 
 .light-theme .break-text {
     color: #059669;

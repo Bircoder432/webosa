@@ -4,7 +4,7 @@
         @click="toggle"
         :title="isDark ? 'Светлая тема' : 'Тёмная тема'"
     >
-        <span class="theme-icon">{{ isDark ? "☀️" : "🌙" }}</span>
+        <span class="theme-icon"><i :class="isDark ? 'ri-sun-line' : 'ri-moon-line'"></i></span>
     </button>
 </template>
 

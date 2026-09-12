@@ -11,7 +11,7 @@
         <div class="lesson-content">
             <div class="lesson-header">
                 <div class="time-badge">
-                    <span class="clock-icon">🕐</span>
+                    <span class="clock-icon"><i class="ri-time-line"></i></span>
                     {{ lesson.startTime }} – {{ lesson.endTime }}
                 </div>
             </div>
@@ -22,11 +22,11 @@
 
             <div class="meta">
                 <div class="meta-item cabinet">
-                    <span class="meta-icon">🚪</span>
+                    <span class="meta-icon"><i class="ri-door-line"></i></span>
                     <span>{{ lesson.cabinet }}</span>
                 </div>
                 <div class="meta-item teacher">
-                    <span class="meta-icon">👤</span>
+                    <span class="meta-icon"><i class="ri-user-line"></i></span>
                     <span>{{ lesson.teacher }}</span>
                 </div>
             </div>

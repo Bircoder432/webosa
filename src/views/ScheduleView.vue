@@ -11,21 +11,21 @@
                     :class="{ active: mode === 'group' }"
                     @click="switchMode('group')"
                 >
-                    <span>👥</span> По группе
+                    <span><i class="ri-group-line"></i></span> По группе
                 </button>
                 <button
                     class="mode-tab"
                     :class="{ active: mode === 'teacher' }"
                     @click="switchMode('teacher')"
                 >
-                    <span>👨‍🏫</span> По преподавателю
+                    <span><i class="ri-user-line"></i></span> По преподавателю
                 </button>
             </div>
 
             <div v-if="mode === 'group'" class="form-grid">
                 <div class="form-group">
                     <label>
-                        <span class="label-icon">🏢</span>
+                        <span class="label-icon"><i class="ri-building-line"></i></span>
                         Корпус
                     </label>
                     <CustomDropdown
@@ -41,7 +41,7 @@
 
                 <div class="form-group">
                     <label>
-                        <span class="label-icon">👥</span>
+                        <span class="label-icon"><i class="ri-group-line"></i></span>
                         Группа
                     </label>
                     <CustomDropdown
@@ -56,7 +56,7 @@
 
                 <div class="form-group">
                     <label>
-                        <span class="label-icon">📅</span>
+                        <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
                         Дата
                     </label>
                     <CustomDatepicker v-model="selectedDate" />
@@ -66,7 +66,7 @@
             <div v-else class="form-grid">
                 <div class="form-group">
                     <label>
-                        <span class="label-icon">👨‍🏫</span>
+                        <span class="label-icon"><i class="ri-user-line"></i></span>
                         Преподаватель
                     </label>
                     <input
@@ -81,7 +81,7 @@
 
                 <div class="form-group">
                     <label>
-                        <span class="label-icon">📅</span>
+                        <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
                         Дата
                     </label>
                     <CustomDatepicker v-model="selectedDate" />
@@ -95,7 +95,7 @@
                 :class="{ loading: isBtnLoading }"
             >
                 <span v-if="isBtnLoading" class="spinner"></span>
-                <span v-else class="btn-icon">🔍</span>
+                <span v-else class="btn-icon"><i class="ri-search-line"></i></span>
                 {{ isBtnLoading ? "Загрузка..." : "Показать расписание" }}
             </button>
         </div>
@@ -131,7 +131,7 @@
             />
             <InitialState
                 v-else-if="!teacherSchedule.length"
-                icon="👨‍🏫"
+                icon="ri-user-line"
                 message="Введите фамилию преподавателя и выберите дату для просмотра расписания"
             />
         </template>

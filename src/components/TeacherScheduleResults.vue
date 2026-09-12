@@ -7,7 +7,7 @@
         >
             <div class="header-top">
                 <h2>
-                    <span class="teacher-badge">👨‍🏫 {{ teacherName }}</span>
+                    <span class="teacher-badge"><i class="ri-user-line"></i> {{ teacherName }}</span>
                 </h2>
                 <div class="header-actions">
                     <div class="summary-badge">
@@ -22,12 +22,12 @@
                         @click="exportToImage"
                         title="Сохранить как картинку"
                     >
-                        <span>💾</span>
+                        <span><i class="ri-save-line"></i></span>
                     </button>
                 </div>
             </div>
             <div class="date-badge">
-                <span class="calendar-icon">📆</span>
+                <span class="calendar-icon"><i class="ri-calendar-line"></i></span>
                 {{ date }}
             </div>
         </div>
@@ -114,7 +114,7 @@ export default {
             try {
                 const btn = element.querySelector(".export-btn");
                 const originalText = btn.innerHTML;
-                btn.innerHTML = "<span>⏳</span>";
+                btn.innerHTML = "<i class='ri-loader-line ri-loader-animate'></i>";
                 btn.disabled = true;
 
                 // Wait for animations

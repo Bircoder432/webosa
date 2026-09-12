@@ -102,6 +102,11 @@ body.light ::-webkit-scrollbar-thumb {
     }
 }
 
+/* RemixIcons spinner animation for loading states */
+.ri-loader-animate {
+    animation: spin 0.8s linear infinite;
+}
+
 @keyframes slideIn {
     to {
         opacity: 1;

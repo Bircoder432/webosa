@@ -1,6 +1,6 @@
 <template>
     <div class="initial-state" :class="{ 'light-theme': isLight }">
-        <div class="initial-icon">{{ icon }}</div>
+        <div class="initial-icon"><i :class="icon"></i></div>
         <p>{{ message }}</p>
     </div>
 </template>
@@ -11,7 +11,7 @@ export default {
     props: {
         icon: {
             type: String,
-            default: "🎓",
+            default: "ri-graduation-cap-line",
         },
         message: {
             type: String,

@@ -12,7 +12,7 @@
             <span :class="{ placeholder: !modelValue }">
                 {{ displayValue || placeholder }}
             </span>
-            <span class="dropdown-arrow">▼</span>
+            <span class="dropdown-arrow"><i class="ri-arrow-down-s-line"></i></span>
         </div>
         <div class="dropdown-menu" v-show="isOpen">
             <div

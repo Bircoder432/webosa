@@ -1,7 +1,7 @@
 <template>
     <header class="app-header">
         <div class="logo">
-            <div class="logo-icon">📚</div>
+            <div class="logo-icon"><i class="ri-book-open-line"></i></div>
             <h1>Расписание ТКПСТ</h1>
         </div>
     </header>

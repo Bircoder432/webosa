@@ -6,7 +6,7 @@
     >
         <div class="datepicker-trigger" @click="toggle">
             <span>{{ displayDate }}</span>
-            <span class="calendar-icon-trigger">📅</span>
+            <span class="calendar-icon-trigger"><i class="ri-calendar-2-line"></i></span>
         </div>
         <div class="calendar-popup" v-show="showCalendar">
             <div class="calendar-header">

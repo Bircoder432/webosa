@@ -7,7 +7,7 @@
                 class="footer-link"
                 :class="{ 'light-theme': isLight }"
             >
-                <span class="link-icon">⚡</span>
+                <span class="link-icon"><i class="ri-thunderstorms-line"></i></span>
                 OpenScheduleApi
             </a>
             <span class="divider" :class="{ 'light-theme': isLight }">•</span>
@@ -17,7 +17,7 @@
                 class="footer-link"
                 :class="{ 'light-theme': isLight }"
             >
-                <span class="link-icon">💻</span>
+                <span class="link-icon"><i class="ri-computer-line"></i></span>
                 GitHub
             </a>
             <span class="divider" :class="{ 'light-theme': isLight }">•</span>
@@ -27,7 +27,7 @@
                 class="footer-link"
                 :class="{ 'light-theme': isLight }"
             >
-                <span class="link-icon">🌐</span>
+                <span class="link-icon"><i class="ri-global-line"></i></span>
                 Сайт ТКПСТ
             </a>
         </div>
