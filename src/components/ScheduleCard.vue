@@ -30,12 +30,22 @@
         </div>
 
         <div class="schedule-timeline">
-            <LessonCard
-                v-for="(lesson, index) in lessons"
-                :key="lesson.order"
-                :lesson="lesson"
-                :index="index"
-            />
+            <template v-for="(lesson, index) in lessons" :key="lesson.order">
+                <LessonCard :lesson="lesson" :index="index" />
+
+                <!-- Индикатор большой перемены -->
+                <div
+                    v-if="index < lessons.length - 1 && getBreakDuration(lesson.endTime, lessons[index + 1].startTime) > 10"
+                    class="break-indicator"
+                    :class="{ 'light-theme': isLight }"
+                >
+                    <span class="break-line"></span>
+                    <span class="break-text">
+                        ☕ Большая перемена — {{ getBreakDuration(lesson.endTime, lessons[index + 1].startTime) }} мин
+                    </span>
+                    <span class="break-line"></span>
+                </div>
+            </template>
         </div>
     </div>
 </template>
@@ -94,6 +104,22 @@ export default {
                 return few;
             return many;
         },
+        getBreakDuration(endTime, startTime) {
+            if (!endTime || !startTime) return 0;
+
+            const [eh, em] = endTime.split(':').map(Number);
+            const [sh, sm] = startTime.split(':').map(Number);
+
+            let endMinutes = eh * 60 + em;
+            let startMinutes = sh * 60 + sm;
+
+            // Если перемена переходит через полночь (например 23:50 - 00:10)
+            if (startMinutes < endMinutes) {
+                startMinutes += 24 * 60;
+            }
+
+            return startMinutes - endMinutes;
+        },
         async exportToImage() {
             const element = this.$refs.scheduleCard;
             if (!element) return;
@@ -106,9 +132,8 @@ export default {
                 btn.disabled = true;
 
                 // ИСПРАВЛЕНИЕ: Ждем полной отрисовки всех анимаций
-                // Анимация slideIn длится 0.5s, плюс задержки между карточками
                 const lastIndex = this.lessons.length - 1;
-                const totalAnimationTime = 500 + lastIndex * 100 + 200; // 200ms запас
+                const totalAnimationTime = 500 + lastIndex * 100 + 200;
 
                 await new Promise((resolve) =>
                     setTimeout(resolve, totalAnimationTime),
@@ -116,7 +141,7 @@ export default {
 
                 // Дополнительно форсируем стили для финального состояния анимаций
                 const lessonCards = element.querySelectorAll(".lesson-card");
-                lessonCards.forEach((card, index) => {
+                lessonCards.forEach((card) => {
                     card.style.animation = "none";
                     card.style.opacity = "1";
                     card.style.transform = "translateY(0)";
@@ -129,33 +154,34 @@ export default {
                     allowTaint: true,
                     logging: false,
                     onclone: (clonedDoc) => {
-                        // Убираем кнопку экспорта
-                        const exportBtn =
-                            clonedDoc.querySelector(".export-btn");
+                        const exportBtn = clonedDoc.querySelector(".export-btn");
                         if (exportBtn) {
                             exportBtn.style.display = "none";
                         }
 
-                        // ИСПРАВЛЕНИЕ: Принудительно устанавливаем финальное состояние анимаций
-                        const cards =
-                            clonedDoc.querySelectorAll(".lesson-card");
+                        const cards = clonedDoc.querySelectorAll(".lesson-card");
                         cards.forEach((card) => {
                             card.style.animation = "none";
                             card.style.opacity = "1";
                             card.style.transform = "translateY(0)";
                             card.style.boxShadow = "none";
                         });
+
+                        // Гарантируем, что плашки перемен тоже видимы и без анимаций
+                        const breaks = clonedDoc.querySelectorAll(".break-indicator");
+                        breaks.forEach((b) => {
+                            b.style.opacity = "1";
+                            b.style.transform = "translateY(0)";
+                        });
                     },
                 });
 
-                // Скачиваем
                 const link = document.createElement("a");
                 const fileName = `расписание_${this.groupName}_${this.date.replace(/\./g, "-")}.png`;
                 link.download = fileName;
                 link.href = canvas.toDataURL("image/png");
                 link.click();
 
-                // Восстанавливаем кнопку
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             } catch (error) {
@@ -175,7 +201,6 @@ export default {
     transition: all 0.3s ease;
     position: relative;
 
-    /* Темная тема */
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
@@ -183,7 +208,6 @@ export default {
         0 8px 10px -6px rgba(0, 0, 0, 0.2);
 }
 
-/* Светлая тема */
 .schedule-card.light-theme {
     background: #ffffff;
     border: 1px solid #E6E6E6;
@@ -218,7 +242,6 @@ export default {
     margin: 0;
 }
 
-/* Крупное и красивое название группы */
 .group-badge {
     display: inline-flex;
     align-items: center;
@@ -288,7 +311,6 @@ export default {
     color: #059669;
 }
 
-/* Кнопка экспорта */
 .export-btn {
     width: 40px;
     height: 40px;
@@ -325,6 +347,43 @@ export default {
     gap: 16px;
 }
 
+/* Стили для индикатора большой перемены */
+.break-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: -4px 0;
+    padding: 0 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: slideIn 0.5s ease forwards;
+    animation-delay: 0.2s;
+}
+
+.break-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(16, 185, 129, 0.4);
+    border-radius: 2px;
+}
+
+.break-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 4px 12px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.light-theme .break-text {
+    color: #059669;
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
 @media (max-width: 600px) {
     .schedule-card {
         padding: 20px;
@@ -344,6 +403,10 @@ export default {
     .group-badge {
         font-size: 1.2rem;
         padding: 10px 16px;
+    }
+
+    .break-indicator {
+        padding: 0 8px;
     }
 }
 </style>
