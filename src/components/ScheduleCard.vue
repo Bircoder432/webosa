@@ -33,7 +33,6 @@
             <template v-for="(lesson, index) in lessons" :key="lesson.order">
                 <LessonCard :lesson="lesson" :index="index" />
 
-                <!-- Индикатор большой перемены -->
                 <div
                     v-if="index < lessons.length - 1 && getBreakDuration(lesson.endTime, lessons[index + 1].startTime) > 10"
                     class="break-indicator"
@@ -113,7 +112,6 @@ export default {
             let endMinutes = eh * 60 + em;
             let startMinutes = sh * 60 + sm;
 
-            // Если перемена переходит через полночь (например 23:50 - 00:10)
             if (startMinutes < endMinutes) {
                 startMinutes += 24 * 60;
             }
@@ -125,13 +123,11 @@ export default {
             if (!element) return;
 
             try {
-                // Показываем loader
                 const btn = element.querySelector(".export-btn");
                 const originalText = btn.innerHTML;
                 btn.innerHTML = "<span>⏳</span>";
                 btn.disabled = true;
 
-                // ИСПРАВЛЕНИЕ: Ждем полной отрисовки всех анимаций
                 const lastIndex = this.lessons.length - 1;
                 const totalAnimationTime = 500 + lastIndex * 100 + 200;
 
@@ -139,7 +135,6 @@ export default {
                     setTimeout(resolve, totalAnimationTime),
                 );
 
-                // Дополнительно форсируем стили для финального состояния анимаций
                 const lessonCards = element.querySelectorAll(".lesson-card");
                 lessonCards.forEach((card) => {
                     card.style.animation = "none";
@@ -167,7 +162,6 @@ export default {
                             card.style.boxShadow = "none";
                         });
 
-                        // Гарантируем, что плашки перемен тоже видимы и без анимаций
                         const breaks = clonedDoc.querySelectorAll(".break-indicator");
                         breaks.forEach((b) => {
                             b.style.opacity = "1";
