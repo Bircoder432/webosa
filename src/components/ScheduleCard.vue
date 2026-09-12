@@ -30,19 +30,23 @@
         </div>
 
         <div class="schedule-timeline">
-            <template v-for="(lesson, index) in lessons" :key="lesson.order">
-                <LessonCard :lesson="lesson" :index="index" />
+            <template v-for="(item, idx) in scheduleWithGaps" :key="idx">
+                <LessonCard
+                    v-if="item.type === 'lesson'"
+                    :lesson="item.data"
+                    :index="item.index"
+                />
 
                 <div
-                    v-if="index < lessons.length - 1 && getBreakDuration(lesson.endTime, lessons[index + 1].startTime) > 10"
+                    v-else-if="item.type === 'gap'"
                     class="break-indicator"
-                    :class="{ 'light-theme': isLight }"
+                    :class="{ 'light-theme': isLight, 'window-indicator': item.gapType === 'window' }"
                 >
-                    <span class="break-line"></span>
-                    <span class="break-text">
-                        ☕ Большая перемена — {{ getBreakDuration(lesson.endTime, lessons[index + 1].startTime) }} мин
+                    <span class="break-line" :class="{ 'window-line': item.gapType === 'window' }"></span>
+                    <span class="break-text" :class="{ 'window-text': item.gapType === 'window' }">
+                        {{ item.text }}
                     </span>
-                    <span class="break-line"></span>
+                    <span class="break-line" :class="{ 'window-line': item.gapType === 'window' }"></span>
                 </div>
             </template>
         </div>
@@ -76,6 +80,37 @@ export default {
         return {
             isLight: document.body.classList.contains("light"),
         };
+    },
+    computed: {
+        scheduleWithGaps() {
+            const result = [];
+            const sortedLessons = [...this.lessons].sort((a, b) => a.order - b.order);
+
+            sortedLessons.forEach((lesson, index) => {
+                result.push({ type: 'lesson', data: lesson, index: index });
+
+                if (index < sortedLessons.length - 1) {
+                    const nextLesson = sortedLessons[index + 1];
+                    const duration = this.getBreakDuration(lesson.endTime, nextLesson.startTime);
+
+                    if (nextLesson.order > lesson.order + 1) {
+                        result.push({
+                            type: 'gap',
+                            gapType: 'window',
+                            text: `🪟 Окно — ${duration} мин`
+                        });
+                    }
+                    else if (duration > 10) {
+                        result.push({
+                            type: 'gap',
+                            gapType: 'break',
+                            text: `☕ Большая перемена — ${duration} мин`
+                        });
+                    }
+                }
+            });
+            return result;
+        }
     },
     mounted() {
         this.themeObserver = new MutationObserver((mutations) => {
@@ -341,7 +376,6 @@ export default {
     gap: 16px;
 }
 
-/* Стили для индикатора большой перемены */
 .break-indicator {
     display: flex;
     align-items: center;
@@ -376,6 +410,22 @@ export default {
     color: #059669;
     background: rgba(16, 185, 129, 0.1);
     border-color: rgba(16, 185, 129, 0.2);
+}
+
+.window-line {
+    background: rgba(245, 158, 11, 0.4) !important;
+}
+
+.window-text {
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.15) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+.light-theme .window-text {
+    color: #d97706 !important;
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-color: rgba(245, 158, 11, 0.2) !important;
 }
 
 @media (max-width: 600px) {
