@@ -1,7 +1,9 @@
 <template>
     <header class="app-header">
         <div class="logo">
-            <div class="logo-icon"><i class="ri-book-open-line"></i></div>
+            <div class="logo-icon">
+                <img src="/favicon.svg" alt="Логотип" />
+            </div>
             <h1>Расписание ТКПСТ</h1>
         </div>
     </header>
@@ -22,8 +24,16 @@
 }
 
 .logo-icon {
-    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     animation: float 3s ease-in-out infinite;
+}
+
+.logo-icon img {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: contain;
 }
 
 h1 {
@@ -41,8 +51,9 @@ h1 {
         font-size: 1.5rem;
     }
 
-    .logo-icon {
-        font-size: 2rem;
+    .logo-icon img {
+        width: 2rem;
+        height: 2rem;
     }
 }
 </style>
