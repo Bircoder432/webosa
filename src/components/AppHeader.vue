@@ -27,7 +27,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: float 3s ease-in-out infinite;
 }
 
 .logo-icon img {
