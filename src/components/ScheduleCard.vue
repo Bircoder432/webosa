@@ -7,7 +7,9 @@
         <div class="schedule-header">
             <div class="schedule-info">
                 <h2>
-                    <span class="group-badge"><i class="ri-group-line"></i> {{ groupName }}</span>
+                    <span class="group-badge">
+                        <i :class="badgeIcon"></i> {{ groupName }}
+                    </span>
                 </h2>
                 <div class="date-badge">
                     <span class="calendar-icon"><i class="ri-calendar-line"></i></span>
@@ -75,6 +77,10 @@ export default {
         date: {
             type: String,
             default: "",
+        },
+        badgeIcon: {
+            type: String,
+            default: "ri-group-line",
         },
     },
     data() {

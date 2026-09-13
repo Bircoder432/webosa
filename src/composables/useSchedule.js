@@ -179,7 +179,8 @@ export function useSchedule() {
       teacherScheduleLoaded.value = true;
       hasTeacherError.value = false;
 
-      let allLessons = [];
+      // Группируем пары по конкретным преподавателям
+      const teacherMap = {};
 
       (res.data || []).forEach((item) => {
         if (item.lessons && item.lessons.length > 0) {
@@ -189,7 +190,14 @@ export function useSchedule() {
           const groupName = group ? group.name : `Группа ${item.groupId}`;
 
           item.lessons.forEach((lesson) => {
-            allLessons.push({
+            const teacherFullName = lesson.teacher || "Без преподавателя";
+
+            if (!teacherMap[teacherFullName]) {
+              teacherMap[teacherFullName] = [];
+            }
+
+            // ИСПРАВЛЕНИЕ: Заменяем ФИО препода на название группы для отображения внутри карточки пары
+            teacherMap[teacherFullName].push({
               ...lesson,
               teacher: groupName,
             });
@@ -197,9 +205,18 @@ export function useSchedule() {
         }
       });
 
-      allLessons.sort((a, b) => a.order - b.order);
+      // Формируем массив объектов для карточек
+      const groupedSchedules = Object.keys(teacherMap).map((teacher) => {
+        return {
+          teacherName: teacher,
+          lessons: teacherMap[teacher].sort((a, b) => a.order - b.order),
+        };
+      });
 
-      teacherSchedule.value = allLessons;
+      // Сортируем преподавателей по алфавиту
+      groupedSchedules.sort((a, b) => a.teacherName.localeCompare(b.teacherName));
+
+      teacherSchedule.value = groupedSchedules;
       displayDate.value = selectedDate.value;
     } catch (e) {
       console.error("Error loading teacher schedule:", e);

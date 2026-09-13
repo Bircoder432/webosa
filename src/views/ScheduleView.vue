@@ -128,12 +128,16 @@
         </template>
 
         <template v-if="mode === 'teacher'">
-            <ScheduleCard
-                v-if="showTeacherSchedule"
-                :lessons="teacherSchedule"
-                :groupName="displayTeacherName"
-                :date="formattedDate"
-            />
+            <template v-if="showTeacherSchedule">
+                <ScheduleCard
+                    v-for="teacherData in teacherSchedule"
+                    :key="teacherData.teacherName"
+                    :lessons="teacherData.lessons"
+                    :groupName="teacherData.teacherName"
+                    :date="formattedDate"
+                    badgeIcon="ri-user-line"
+                />
+            </template>
             <EmptyState
                 v-else-if="showTeacherEmptyState"
                 title="Пары не найдены"
