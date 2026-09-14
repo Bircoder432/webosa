@@ -369,4 +369,13 @@ export default {
         font-size: 1.2rem;
     }
 }
+
+.workspace > .schedule-card,
+.workspace > .empty-state,
+.workspace > .initial-state,
+.workspace > .splash-card {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
 </style>
