@@ -45,7 +45,6 @@
             </button>
 
             <template v-if="mode === 'group'">
-                <!-- Сплеш вместо пропадающей карточки -->
                 <LoadingSplash v-if="isLoading" text="Загружаем расписание группы..." />
 
                 <template v-else-if="!isWeekMode">
@@ -113,9 +112,14 @@
                         subtitle="На выбранную дату пар у преподавателя нет"
                     />
                     <InitialState
-                        v-else
+                        v-else-if="!teacherScheduleLoaded && !teacherName.trim()"
                         icon="ri-user-line"
                         message="Введите фамилию преподавателя и выберите дату"
+                    />
+                    <InitialState
+                        v-else-if="!teacherScheduleLoaded && teacherName.trim()"
+                        icon="ri-user-line"
+                        message="Нажмите «Показать расписание», чтобы найти пары"
                     />
                 </template>
 
@@ -155,9 +159,10 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useSchedule } from "../composables/useSchedule.js";
 import { useTheme } from "../composables/useTheme.js";
+import { useViewport } from "../composables/useViewport.js";
 import ThemeToggle from "../components/ThemeToggle.vue";
 import AppHeader from "../components/AppHeader.vue";
 import ScheduleSidebar from "../components/ScheduleSidebar.vue";
@@ -183,7 +188,7 @@ export default {
     },
     setup() {
         const mode = ref("group");
-        const isMobile = ref(window.innerWidth < 768);
+        const { isMobile } = useViewport();
         const isSidebarHidden = ref(isMobile.value);
 
         const { isDark, isLight, toggleTheme, setTheme } = useTheme();
@@ -220,19 +225,12 @@ export default {
         const showSidebar = () => { isSidebarHidden.value = false; };
         const hideSidebar = () => { isSidebarHidden.value = true; };
 
-        const handleResize = () => {
-            isMobile.value = window.innerWidth < 768;
-        };
-
         onMounted(() => {
             const saved = localStorage.getItem("theme");
             const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
             setTheme(saved ? saved === "dark" : prefersDark);
             s.initializeCampuses();
-            window.addEventListener("resize", handleResize);
         });
-
-        onUnmounted(() => window.removeEventListener("resize", handleResize));
 
         return {
             mode,
@@ -273,6 +271,7 @@ export default {
             teacherSchedule: s.teacherSchedule,
             teacherWeekSchedule: s.teacherWeekSchedule,
             isTeacherLoading: s.isTeacherLoading,
+            teacherScheduleLoaded: s.teacherScheduleLoaded,
             showTeacherSchedule: s.showTeacherSchedule,
             showTeacherEmptyState: s.showTeacherEmptyState,
             showTeacherWeekSchedule: s.showTeacherWeekSchedule,
@@ -352,7 +351,7 @@ export default {
     transform: translateY(100%);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .dashboard {
         flex-direction: column;
     }

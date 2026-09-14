@@ -217,6 +217,7 @@
 import LessonCard from "./LessonCard.vue";
 import ScheduleCard from "./ScheduleCard.vue";
 import { useExport } from "../composables/useExport.js";
+import { useViewport } from "../composables/useViewport.js";
 
 export default {
     name: "WeekGrid",
@@ -231,17 +232,18 @@ export default {
     },
     setup(props) {
         const { exportToImage } = useExport();
+        const { isMobile } = useViewport();
+
         const handleWeekExport = async () => {
             const isLight = document.body.classList.contains("light");
             await exportToImage([], props.groupName, "", isLight, true, props.weekSchedule);
         };
-        return { handleWeekExport };
+        return { handleWeekExport, isMobile };
     },
     data() {
         return {
             zoomedDate: null,
             mobileDayIndex: 0,
-            isMobile: window.innerWidth <= 768,
         };
     },
     computed: {
@@ -269,15 +271,6 @@ export default {
             this.mobileDayIndex = 0;
             this.zoomedDate = null;
         },
-    },
-    mounted() {
-        this._onResize = () => {
-            this.isMobile = window.innerWidth <= 768;
-        };
-        window.addEventListener("resize", this._onResize);
-    },
-    beforeUnmount() {
-        window.removeEventListener("resize", this._onResize);
     },
     methods: {
         zoomIn(date) { this.zoomedDate = date; },
