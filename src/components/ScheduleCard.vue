@@ -1,7 +1,7 @@
 <template>
     <div
         class="schedule-card"
-        :class="{ 'light-theme': isLight }"
+        :class="{ 'light-theme': isLight, 'no-animation': disableAnimation }"
         ref="scheduleCard"
     >
         <div class="schedule-header">
@@ -22,8 +22,9 @@
                     {{ pluralize(lessons.length, "пара", "пары", "пар") }}
                 </div>
                 <button
+                    v-if="!hideExportBtn"
                     class="export-btn"
-                    @click="exportToImage"
+                    @click="handleExport"
                     title="Сохранить как картинку"
                 >
                     <span><i class="ri-save-line"></i></span>
@@ -37,14 +38,19 @@
                     v-if="item.type === 'lesson'"
                     :lesson="item.data"
                     :index="item.index"
+                    :disableAnimation="disableAnimation"
                 />
 
                 <div
                     v-else-if="item.type === 'gap'"
                     class="break-indicator"
-                    :class="{ 'light-theme': isLight, 'window-indicator': item.gapType === 'window' }"
+                    :class="{
+                        'light-theme': isLight,
+                        'window-indicator': item.gapType === 'window',
+                        'no-animation': disableAnimation,
+                    }"
                 >
-                     <span class="break-line" :class="{ 'window-line': item.gapType === 'window' }"></span>
+                    <span class="break-line" :class="{ 'window-line': item.gapType === 'window' }"></span>
                     <span class="break-text" :class="{ 'window-text': item.gapType === 'window' }">
                         <i :class="item.icon" class="break-text-icon"></i>
                         {{ item.text }}
@@ -58,7 +64,7 @@
 
 <script>
 import LessonCard from "./LessonCard.vue";
-import html2canvas from "html2canvas";
+import { useExport } from "../composables/useExport.js";
 
 export default {
     name: "ScheduleCard",
@@ -82,6 +88,22 @@ export default {
             type: String,
             default: "ri-group-line",
         },
+        disableAnimation: {
+            type: Boolean,
+            default: false,
+        },
+        hideExportBtn: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    setup(props) {
+        const { exportToImage } = useExport();
+        const handleExport = async () => {
+            const isLight = document.body.classList.contains("light");
+            await exportToImage(props.lessons, props.groupName, props.date, isLight);
+        };
+        return { handleExport };
     },
     data() {
         return {
@@ -162,71 +184,6 @@ export default {
 
             return startMinutes - endMinutes;
         },
-        async exportToImage() {
-            const element = this.$refs.scheduleCard;
-            if (!element) return;
-
-            try {
-                const btn = element.querySelector(".export-btn");
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "<i class='ri-loader-line ri-loader-animate'></i>";
-                btn.disabled = true;
-
-                const lastIndex = this.lessons.length - 1;
-                const totalAnimationTime = 500 + lastIndex * 100 + 200;
-
-                await new Promise((resolve) =>
-                    setTimeout(resolve, totalAnimationTime),
-                );
-
-                const lessonCards = element.querySelectorAll(".lesson-card");
-                lessonCards.forEach((card) => {
-                    card.style.animation = "none";
-                    card.style.opacity = "1";
-                    card.style.transform = "translateY(0)";
-                });
-
-                const canvas = await html2canvas(element, {
-                    backgroundColor: this.isLight ? "#ffffff" : "#1e293b",
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true,
-                    logging: false,
-                    onclone: (clonedDoc) => {
-                        const exportBtn = clonedDoc.querySelector(".export-btn");
-                        if (exportBtn) {
-                            exportBtn.style.display = "none";
-                        }
-
-                        const cards = clonedDoc.querySelectorAll(".lesson-card");
-                        cards.forEach((card) => {
-                            card.style.animation = "none";
-                            card.style.opacity = "1";
-                            card.style.transform = "translateY(0)";
-                            card.style.boxShadow = "none";
-                        });
-
-                        const breaks = clonedDoc.querySelectorAll(".break-indicator");
-                        breaks.forEach((b) => {
-                            b.style.opacity = "1";
-                            b.style.transform = "translateY(0)";
-                        });
-                    },
-                });
-
-                const link = document.createElement("a");
-                const fileName = `расписание_${this.groupName}_${this.date.replace(/\./g, "-")}.png`;
-                link.download = fileName;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            } catch (error) {
-                console.error("Ошибка экспорта:", error);
-                alert("Не удалось сохранить расписание");
-            }
-        },
     },
 };
 </script>
@@ -238,7 +195,6 @@ export default {
     margin-bottom: 24px;
     transition: all 0.3s ease;
     position: relative;
-
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
@@ -252,6 +208,12 @@ export default {
     box-shadow:
         0 10px 25px -5px rgba(0, 0, 0, 0.1),
         0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-card.no-animation {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 .schedule-header {
@@ -397,6 +359,12 @@ export default {
     animation-delay: 0.2s;
 }
 
+.break-indicator.no-animation {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
 .break-line {
     flex: 1;
     height: 2px;
@@ -404,21 +372,21 @@ export default {
     border-radius: 2px;
 }
 
-    .break-text {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #10b981;
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        padding: 4px 12px;
-        border-radius: 12px;
-        white-space: nowrap;
-    }
+.break-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 4px 12px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
 
-    .break-text-icon {
-        font-size: 1rem;
-        margin-right: 4px;
-    }
+.break-text-icon {
+    font-size: 1rem;
+    margin-right: 4px;
+}
 
 .light-theme .break-text {
     color: #059669;
@@ -440,6 +408,13 @@ export default {
     color: #d97706 !important;
     background: rgba(245, 158, 11, 0.1) !important;
     border-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 600px) {

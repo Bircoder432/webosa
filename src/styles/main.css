@@ -33,7 +33,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     min-height: 100vh;
 
-    /* Плавные переходы для всех свойств */
     transition:
         background 0.3s ease,
         color 0.3s ease;
@@ -51,7 +50,6 @@ body.light {
     color: #1e293b;
 }
 
-/* Глобальные переходы для всех элементов */
 *,
 *::before,
 *::after {
@@ -85,7 +83,6 @@ body.light ::-webkit-scrollbar-thumb {
     background: #0B6DAC;
 }
 
-/* Animations */
 @keyframes float {
     0%,
     100% {
@@ -102,7 +99,6 @@ body.light ::-webkit-scrollbar-thumb {
     }
 }
 
-/* RemixIcons spinner animation for loading states */
 .ri-loader-animate {
     animation: spin 0.8s linear infinite;
 }
@@ -123,4 +119,12 @@ body.light ::-webkit-scrollbar-thumb {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.dashboard {
+    background-attachment: fixed;
+}
+
+body.no-scroll {
+    overflow: hidden;
 }

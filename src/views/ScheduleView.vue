@@ -1,531 +1,373 @@
 <template>
-    <div class="container">
+    <div class="dashboard" :class="{ 'sidebar-hidden': isSidebarHidden, 'is-mobile': isMobile }">
         <ThemeToggle :isDark="isDark" @toggle="toggleTheme" />
-        <AppHeader />
 
-        <div class="selectors-card" :class="{ 'light-theme': isLight }">
-            <!-- Mode Tabs -->
-            <div class="mode-tabs" :class="{ 'light-theme': isLight }">
-                <button
-                    class="mode-tab"
-                    :class="{ active: mode === 'group' }"
-                    @click="switchMode('group')"
-                >
-                    <span><i class="ri-group-line"></i></span> По группе
-                </button>
-                <button
-                    class="mode-tab"
-                    :class="{ active: mode === 'teacher' }"
-                    @click="switchMode('teacher')"
-                >
-                    <span><i class="ri-user-line"></i></span> По преподавателю
-                </button>
-            </div>
+        <Transition :name="isMobile ? 'slide-bottom' : 'slide-sidebar'">
+            <ScheduleSidebar
+                v-if="!isSidebarHidden"
+                :mode="mode"
+                @update:mode="updateMode"
+                :isWeekMode="isWeekMode"
+                @update:isWeekMode="updateIsWeekMode"
+                :campuses="campuses"
+                :groups="groups"
+                :selectedCampus="selectedCampus"
+                @update:selectedCampus="updateCampus"
+                :selectedGroup="selectedGroup"
+                @update:selectedGroup="updateGroup"
+                :selectedDate="selectedDate"
+                @update:selectedDate="updateDate"
+                :isLoading="isLoading"
+                :teacherName="teacherName"
+                @update:teacherName="updateTeacher"
+                :isLight="isLight"
+                :isMobile="isMobile"
+                :isLoadDisabled="isLoadDisabled"
+                :isBtnLoading="isBtnLoading"
+                :weekStartDate="weekStartDate"
+                @on-campus-change="onCampusChange"
+                @load="handleLoad"
+                @change-week="changeWeek"
+                @close="hideSidebar"
+            />
+        </Transition>
 
-            <Transition name="mode-fade" mode="out-in">
-                <div
-                    v-if="mode === 'group'"
-                    key="group"
-                    class="form-grid"
-                >
-                    <div class="form-group">
-                        <label>
-                            <span class="label-icon"><i class="ri-building-line"></i></span>
-                            Корпус
-                        </label>
-                        <CustomDropdown
-                            v-model="selectedCampus"
-                            :items="campuses"
-                            placeholder="Выберите корпус"
-                            labelKey="name"
-                            valueKey="campusId"
-                            :disabled="!campuses.length"
-                            @change="onCampusChange"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label>
-                            <span class="label-icon"><i class="ri-group-line"></i></span>
-                            Группа
-                        </label>
-                        <CustomDropdown
-                            v-model="selectedGroup"
-                            :items="groups"
-                            placeholder="Выберите группу"
-                            labelKey="name"
-                            valueKey="studentGroupId"
-                            :disabled="!groups.length"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label>
-                            <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
-                            Дата
-                        </label>
-                        <CustomDatepicker v-model="selectedDate" />
-                    </div>
-                </div>
-
-                <div
-                    v-else
-                    key="teacher"
-                    class="form-grid"
-                >
-                    <div class="form-group">
-                        <label>
-                            <span class="label-icon"><i class="ri-user-line"></i></span>
-                            Преподаватель
-                        </label>
-                        <input
-                            type="text"
-                            class="teacher-input"
-                            :class="{ 'light-theme': isLight }"
-                            v-model="teacherName"
-                            placeholder="Введите фамилию преподавателя"
-                            @keydown.enter="loadTeacherSchedule"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label>
-                            <span class="label-icon"><i class="ri-calendar-2-line"></i></span>
-                            Дата
-                        </label>
-                        <CustomDatepicker v-model="selectedDate" />
-                    </div>
-                </div>
-            </Transition>
+        <main class="workspace">
+            <AppHeader />
 
             <button
-                class="load-btn"
-                :disabled="isLoadDisabled"
-                @click="mode === 'group' ? loadSchedule() : loadTeacherSchedule()"
-                :class="{ loading: isBtnLoading }"
+                v-if="isSidebarHidden"
+                class="filter-fab"
+                @click="showSidebar"
+                title="Открыть фильтры"
             >
-                <span v-if="isBtnLoading" class="spinner"></span>
-                <span v-else class="btn-icon"><i class="ri-search-line"></i></span>
-                {{ isBtnLoading ? "Загрузка..." : "Показать расписание" }}
+                <i class="ri-filter-3-line"></i>
             </button>
-        </div>
 
-        <template v-if="mode === 'group'">
-            <ScheduleCard
-                v-if="showSchedule"
-                :lessons="schedule"
-                :groupName="selectedGroupName"
-                :date="formattedDate"
-            />
-            <EmptyState
-                v-else-if="showEmptyState"
-                title="Расписание не найдено"
-                subtitle="На выбранную дату занятий нет"
-            />
-            <InitialState
-                v-else-if="!selectedGroup && !schedule.length"
-            />
-        </template>
+            <template v-if="mode === 'group'">
+                <!-- Сплеш вместо пропадающей карточки -->
+                <LoadingSplash v-if="isLoading" text="Загружаем расписание группы..." />
 
-        <template v-if="mode === 'teacher'">
-            <template v-if="showTeacherSchedule">
-                <ScheduleCard
-                    v-for="teacherData in teacherSchedule"
-                    :key="teacherData.teacherName"
-                    :lessons="teacherData.lessons"
-                    :groupName="teacherData.teacherName"
-                    :date="formattedDate"
-                    badgeIcon="ri-user-line"
-                />
+                <template v-else-if="!isWeekMode">
+                    <ScheduleCard
+                        v-if="showSchedule"
+                        :lessons="schedule"
+                        :groupName="selectedGroupName"
+                        :date="formattedDate"
+                    />
+                    <EmptyState
+                        v-else-if="showEmptyState"
+                        title="Расписание не найдено"
+                        subtitle="На выбранную дату занятий нет"
+                    />
+                    <InitialState
+                        v-else-if="!scheduleLoaded && !selectedGroup"
+                        message="Выберите корпус и группу для просмотра расписания"
+                    />
+                    <InitialState
+                        v-else-if="!scheduleLoaded && selectedGroup"
+                        message="Нажмите «Показать расписание», чтобы загрузить пары"
+                    />
+                </template>
+
+                <template v-else>
+                    <WeekGrid
+                        v-if="scheduleLoaded && weekSchedule.length > 0"
+                        :weekSchedule="weekSchedule"
+                        :isLight="isLight"
+                        :groupName="selectedGroupName"
+                    />
+                    <EmptyState
+                        v-else-if="scheduleLoaded"
+                        title="Неделя пуста"
+                        subtitle="На этой неделе занятий нет"
+                    />
+                    <InitialState
+                        v-else-if="!scheduleLoaded && !selectedGroup"
+                        message="Выберите корпус и группу для просмотра расписания на неделю"
+                    />
+                    <InitialState
+                        v-else-if="!scheduleLoaded && selectedGroup"
+                        message="Нажмите «Показать расписание», чтобы загрузить неделю"
+                    />
+                </template>
             </template>
-            <EmptyState
-                v-else-if="showTeacherEmptyState"
-                title="Пары не найдены"
-                subtitle="На выбранную дату пар у преподавателя нет"
-            />
-            <InitialState
-                v-else-if="!teacherSchedule.length"
-                icon="ri-user-line"
-                message="Введите фамилию преподавателя и выберите дату для просмотра расписания"
-            />
-        </template>
 
-        <AppFooter />
+            <template v-else>
+                <LoadingSplash v-if="isTeacherLoading" text="Ищем пары преподавателя..." />
+
+                <template v-else-if="!isWeekMode">
+                    <template v-if="showTeacherSchedule">
+                        <ScheduleCard
+                            v-for="t in teacherSchedule"
+                            :key="t.teacherName"
+                            :lessons="t.lessons"
+                            :groupName="t.teacherName"
+                            :date="formattedDate"
+                            badgeIcon="ri-user-line"
+                        />
+                    </template>
+                    <EmptyState
+                        v-else-if="showTeacherEmptyState"
+                        title="Пары не найдены"
+                        subtitle="На выбранную дату пар у преподавателя нет"
+                    />
+                    <InitialState
+                        v-else
+                        icon="ri-user-line"
+                        message="Введите фамилию преподавателя и выберите дату"
+                    />
+                </template>
+
+                <template v-else>
+                    <template v-if="showTeacherWeekSchedule">
+                        <WeekGrid
+                            v-for="tw in teacherWeekSchedule"
+                            :key="tw.teacherName"
+                            :weekSchedule="tw.weekSchedule"
+                            :isLight="isLight"
+                            :groupName="tw.teacherName"
+                        />
+                    </template>
+                    <EmptyState
+                        v-else-if="showTeacherWeekEmptyState"
+                        title="Пары не найдены"
+                        subtitle="На этой неделе у преподавателя нет пар"
+                    />
+                    <InitialState
+                        v-else-if="!teacherScheduleLoaded && !teacherName.trim()"
+                        icon="ri-user-line"
+                        message="Введите фамилию преподавателя и выберите неделю"
+                    />
+                    <InitialState
+                        v-else-if="!teacherScheduleLoaded && teacherName.trim()"
+                        icon="ri-user-line"
+                        message="Нажмите «Показать расписание», чтобы загрузить неделю"
+                    />
+                </template>
+            </template>
+
+            <AppFooter />
+        </main>
+
+        <div v-if="isMobile && !isSidebarHidden" class="overlay" @click="hideSidebar"></div>
     </div>
 </template>
 
 <script>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useSchedule } from "../composables/useSchedule.js";
 import { useTheme } from "../composables/useTheme.js";
 import ThemeToggle from "../components/ThemeToggle.vue";
 import AppHeader from "../components/AppHeader.vue";
-import CustomDropdown from "../components/CustomDropdown.vue";
-import CustomDatepicker from "../components/CustomDatepicker.vue";
+import ScheduleSidebar from "../components/ScheduleSidebar.vue";
 import ScheduleCard from "../components/ScheduleCard.vue";
 import EmptyState from "../components/EmptyState.vue";
 import InitialState from "../components/InitialState.vue";
 import AppFooter from "../components/AppFooter.vue";
+import WeekGrid from "../components/WeekGrid.vue";
+import LoadingSplash from "../components/LoadingSplash.vue";
 
 export default {
     name: "ScheduleView",
     components: {
         ThemeToggle,
         AppHeader,
-        CustomDropdown,
-        CustomDatepicker,
+        ScheduleSidebar,
         ScheduleCard,
         EmptyState,
         InitialState,
         AppFooter,
+        WeekGrid,
+        LoadingSplash,
     },
     setup() {
         const mode = ref("group");
+        const isMobile = ref(window.innerWidth < 768);
+        const isSidebarHidden = ref(isMobile.value);
 
         const { isDark, isLight, toggleTheme, setTheme } = useTheme();
+        const s = useSchedule();
 
-        const {
-            campuses,
-            groups,
-            schedule,
-            selectedCampus,
-            selectedGroup,
-            selectedDate,
-            isLoading,
-            selectedGroupName,
-            formattedDate,
-            showSchedule,
-            showEmptyState,
-            initializeCampuses,
-            onCampusChange,
-            loadSchedule,
-            teacherName,
-            displayTeacherName,
-            teacherSchedule,
-            isTeacherLoading,
-            showTeacherSchedule,
-            showTeacherEmptyState,
-            loadTeacherSchedule,
-        } = useSchedule();
+        const updateMode = (v) => { mode.value = v; };
+        const updateIsWeekMode = (v) => { s.isWeekMode.value = v; };
+        const updateCampus = (v) => { s.selectedCampus.value = v; };
+        const updateGroup = (v) => { s.selectedGroup.value = v; };
+        const updateDate = (v) => { s.selectedDate.value = v; };
+        const updateTeacher = (v) => { s.teacherName.value = v; };
 
         const isLoadDisabled = computed(() => {
+            if (mode.value === "group")
+                return !s.selectedGroup.value || s.isLoading.value;
+            return !s.teacherName.value.trim() || s.isTeacherLoading.value;
+        });
+
+        const isBtnLoading = computed(() =>
+            mode.value === "group" ? s.isLoading.value : s.isTeacherLoading.value,
+        );
+
+        const handleLoad = () => {
             if (mode.value === "group") {
-                return !selectedGroup.value || isLoading.value;
+                if (s.isWeekMode.value) s.loadWeekSchedule();
+                else s.loadSchedule();
+            } else {
+                if (s.isWeekMode.value) s.loadTeacherWeekSchedule();
+                else s.loadTeacherSchedule();
             }
-            return !teacherName.value.trim() || isTeacherLoading.value;
-        });
+            isSidebarHidden.value = true;
+        };
 
-        const isBtnLoading = computed(() => {
-            return mode.value === "group"
-                ? isLoading.value
-                : isTeacherLoading.value;
-        });
+        const showSidebar = () => { isSidebarHidden.value = false; };
+        const hideSidebar = () => { isSidebarHidden.value = true; };
 
-        const switchMode = (newMode) => {
-            mode.value = newMode;
+        const handleResize = () => {
+            isMobile.value = window.innerWidth < 768;
         };
 
         onMounted(() => {
-            const savedTheme = localStorage.getItem("theme");
-            const prefersDark = window.matchMedia(
-                "(prefers-color-scheme: dark)",
-            ).matches;
-
-            setTheme(savedTheme ? savedTheme === "dark" : prefersDark);
-
-            initializeCampuses();
-
-            document.addEventListener("keydown", (e) => {
-                if (e.key === "Escape") {
-                    document.dispatchEvent(new CustomEvent("close-dropdowns"));
-                }
-            });
+            const saved = localStorage.getItem("theme");
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            setTheme(saved ? saved === "dark" : prefersDark);
+            s.initializeCampuses();
+            window.addEventListener("resize", handleResize);
         });
 
+        onUnmounted(() => window.removeEventListener("resize", handleResize));
+
         return {
+            mode,
+            isMobile,
+            isSidebarHidden,
             isDark,
             isLight,
-            mode,
-            switchMode,
-            campuses,
-            groups,
-            schedule,
-            selectedCampus,
-            selectedGroup,
-            selectedDate,
-            isLoading,
+            toggleTheme,
+            handleLoad,
+            showSidebar,
+            hideSidebar,
             isLoadDisabled,
             isBtnLoading,
-            selectedGroupName,
-            formattedDate,
-            showSchedule,
-            showEmptyState,
-            toggleTheme,
-            onCampusChange,
-            loadSchedule,
-            teacherName,
-            displayTeacherName,
-            teacherSchedule,
-            isTeacherLoading,
-            showTeacherSchedule,
-            showTeacherEmptyState,
-            loadTeacherSchedule,
+            updateMode,
+            updateIsWeekMode,
+            updateCampus,
+            updateGroup,
+            updateDate,
+            updateTeacher,
+            campuses: s.campuses,
+            groups: s.groups,
+            schedule: s.schedule,
+            selectedCampus: s.selectedCampus,
+            selectedGroup: s.selectedGroup,
+            selectedDate: s.selectedDate,
+            isLoading: s.isLoading,
+            teacherName: s.teacherName,
+            selectedGroupName: s.selectedGroupName,
+            formattedDate: s.formattedDate,
+            showSchedule: s.showSchedule,
+            showEmptyState: s.showEmptyState,
+            onCampusChange: s.onCampusChange,
+            isWeekMode: s.isWeekMode,
+            weekSchedule: s.weekSchedule,
+            weekStartDate: s.weekStartDate,
+            changeWeek: s.changeWeek,
+            scheduleLoaded: s.scheduleLoaded,
+            teacherSchedule: s.teacherSchedule,
+            teacherWeekSchedule: s.teacherWeekSchedule,
+            isTeacherLoading: s.isTeacherLoading,
+            showTeacherSchedule: s.showTeacherSchedule,
+            showTeacherEmptyState: s.showTeacherEmptyState,
+            showTeacherWeekSchedule: s.showTeacherWeekSchedule,
+            showTeacherWeekEmptyState: s.showTeacherWeekEmptyState,
         };
     },
 };
 </script>
 
 <style scoped>
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    position: relative;
-}
-
-.selectors-card {
-    border-radius: 24px;
-    padding: 28px;
-    margin-bottom: 24px;
-    position: relative;
-    z-index: 100;
-
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 8px 10px -6px rgba(0, 0, 0, 0.2);
-
-    transition: all 0.3s ease;
-}
-
-.selectors-card.light-theme {
-    background: #ffffff;
-    border: 1px solid #e6e6e6;
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-
-.mode-tabs {
+.dashboard {
     display: flex;
-    gap: 6px;
-    margin-bottom: 24px;
-    padding: 5px;
-    border-radius: 14px;
-    background: rgba(0, 0, 0, 0.25);
+    min-height: 100vh;
+    position: relative;
 }
 
-.mode-tabs.light-theme {
-    background: rgba(0, 0, 0, 0.05);
-}
-
-.mode-tab {
+.workspace {
     flex: 1;
-    padding: 12px 20px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    background: transparent;
-    color: #94a3b8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    padding: 40px 24px;
+    min-width: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mode-tabs.light-theme .mode-tab {
-    color: #64748b;
+.dashboard.sidebar-hidden .workspace {
+    margin-left: 0;
 }
 
-.mode-tabs.light-theme .mode-tab.active {
-    color: white;
-}
-
-.mode-tab.active {
-    background: linear-gradient(135deg, #0b6dac, #21badc);
-    color: white;
-    box-shadow: 0 4px 15px rgba(11, 109, 172, 0.3);
-}
-
-.mode-tab:hover:not(.active) {
-    color: #f1f5f9;
-}
-
-.mode-tabs.light-theme .mode-tab:hover:not(.active) {
-    color: #1e293b;
-}
-
-.mode-fade-enter-active,
-.mode-fade-leave-active {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.mode-fade-enter-from,
-.mode-fade-leave-to {
-    opacity: 0;
-    transform: translateY(8px);
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 24px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #94a3b8;
-    transition: color 0.3s ease;
-}
-
-.light-theme label {
-    color: #64748b;
-}
-
-.label-icon {
-    font-size: 1rem;
-}
-
-.teacher-input {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 2px solid transparent;
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    background: #0f172a;
-    color: #f1f5f9;
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.teacher-input.light-theme {
-    background: #ffffff;
-    color: #1e293b;
-    border-color: #e6e6e6;
-}
-
-.teacher-input:focus {
-    outline: none;
-    border-color: #0b6dac;
-    box-shadow: 0 0 0 3px rgba(11, 109, 172, 0.15);
-}
-
-.teacher-input::placeholder {
-    opacity: 0.6;
-}
-
-/* Load Button */
-.load-btn {
-    width: 100%;
-    padding: 14px 24px;
-    border-radius: 14px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    font-family: inherit;
-    font-size: 1rem;
-    color: white;
-    background: linear-gradient(135deg, #0b6dac, #21badc);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    position: relative;
-    overflow: hidden;
-}
-
-.load-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    transition: left 0.5s ease;
-}
-
-.load-btn:hover:not(:disabled)::before {
-    left: 100%;
-}
-
-.load-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.3),
-        0 0 30px rgba(11, 109, 172, 0.25);
-}
-
-.load-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    filter: grayscale(0.5);
-}
-
-.load-btn.loading {
-    cursor: wait;
-}
-
-.btn-icon {
-    font-size: 1.1rem;
-}
-
-.spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
+.filter-fab {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    background: linear-gradient(135deg, #0b6dac, #21badc);
+    color: white;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(11, 109, 172, 0.4);
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+.filter-fab:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(2px);
+}
+
+.slide-sidebar-enter-active,
+.slide-sidebar-leave-active {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-sidebar-enter-from,
+.slide-sidebar-leave-to {
+    transform: translateX(-100%);
+}
+
+.slide-bottom-enter-active,
+.slide-bottom-leave-active {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-bottom-enter-from,
+.slide-bottom-leave-to {
+    transform: translateY(100%);
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        flex-direction: column;
     }
-}
 
-@media (max-width: 600px) {
-    .container {
+    .workspace {
         padding: 20px 16px;
+        padding-top: 80px;
     }
 
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    .selectors-card {
-        padding: 20px;
-        border-radius: 20px;
-    }
-
-    .mode-tab {
-        padding: 10px 12px;
-        font-size: 0.85rem;
+    .filter-fab {
+        top: 16px;
+        left: 16px;
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
     }
 }
 </style>
