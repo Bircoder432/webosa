@@ -8,7 +8,7 @@
             <span>{{ displayDate }}</span>
             <span class="calendar-icon-trigger"><i class="ri-calendar-2-line"></i></span>
         </div>
-        <div class="calendar-popup" v-show="showCalendar">
+        <div class="calendar-popup" :class="{ 'drop-up': dropUp }" v-show="showCalendar">
             <div class="calendar-header">
                 <button class="nav-btn" @click.stop="prevMonth">‹</button>
                 <span class="month-year">{{ currentMonthYear }}</span>
@@ -71,20 +71,11 @@ export default {
     data() {
         return {
             showCalendar: false,
+            dropUp: false,
             weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
             months: [
-                "Январь",
-                "Февраль",
-                "Март",
-                "Апрель",
-                "Май",
-                "Июнь",
-                "Июль",
-                "Август",
-                "Сентябрь",
-                "Октябрь",
-                "Ноябрь",
-                "Декабрь",
+                "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+                "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
             ],
         };
     },
@@ -124,15 +115,7 @@ export default {
             const days = [];
             const selected = this.parseDate(this.modelValue);
 
-            // Previous month days
-            const prevMonthLastDay = new Date(
-                year,
-                month,
-                0,
-                12,
-                0,
-                0,
-            ).getDate();
+            const prevMonthLastDay = new Date(year, month, 0, 12, 0, 0).getDate();
             for (let i = startDayOfWeek - 1; i >= 0; i--) {
                 const day = prevMonthLastDay - i;
                 days.push({
@@ -146,7 +129,6 @@ export default {
                 });
             }
 
-            // Current month days
             const today = new Date();
 
             for (let day = 1; day <= daysInMonth; day++) {
@@ -167,7 +149,6 @@ export default {
                 });
             }
 
-            // Next month days
             const remainingCells = 42 - days.length;
             for (let day = 1; day <= remainingCells; day++) {
                 days.push({
@@ -185,13 +166,11 @@ export default {
         },
     },
     methods: {
-        // ИСПРАВЛЕНИЕ: Парсим дату с полуднем
         parseDate(dateStr) {
             if (!dateStr) return new Date();
             const [y, m, d] = dateStr.split("-").map(Number);
             return new Date(y, m - 1, d, 12, 0, 0);
         },
-        // ИСПРАВЛЕНИЕ: Форматируем дату из локального времени
         formatDateLocal(date) {
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -205,7 +184,18 @@ export default {
                 d1.getFullYear() === d2.getFullYear()
             );
         },
+        updateDirection() {
+            const el = this.$el;
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const POPUP_HEIGHT = 400; // примерная высота календаря
+            const GAP = 8;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            this.dropUp = spaceBelow < POPUP_HEIGHT + GAP && spaceAbove > spaceBelow;
+        },
         toggle() {
+            if (!this.showCalendar) this.updateDirection();
             this.showCalendar = !this.showCalendar;
         },
         close() {
@@ -213,55 +203,24 @@ export default {
         },
         prevMonth() {
             const d = this.currentCalendarDate;
-            const newDate = new Date(
-                d.getFullYear(),
-                d.getMonth() - 1,
-                1,
-                12,
-                0,
-                0,
-            );
+            const newDate = new Date(d.getFullYear(), d.getMonth() - 1, 1, 12, 0, 0);
             this.$emit("update:modelValue", this.formatDateLocal(newDate));
         },
         nextMonth() {
             const d = this.currentCalendarDate;
-            const newDate = new Date(
-                d.getFullYear(),
-                d.getMonth() + 1,
-                1,
-                12,
-                0,
-                0,
-            );
+            const newDate = new Date(d.getFullYear(), d.getMonth() + 1, 1, 12, 0, 0);
             this.$emit("update:modelValue", this.formatDateLocal(newDate));
         },
-        // ИСПРАВЛЕНИЕ: Используем date с полуднем
         selectDate(dateInfo) {
             const d = dateInfo.date;
-            // Убедимся что время 12:00
-            const fixedDate = new Date(
-                d.getFullYear(),
-                d.getMonth(),
-                d.getDate(),
-                12,
-                0,
-                0,
-            );
+            const fixedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
             const dateStr = this.formatDateLocal(fixedDate);
             this.$emit("update:modelValue", dateStr);
             this.showCalendar = false;
         },
-        // ИСПРАВЛЕНИЕ: Сегодня с полуднем
         selectToday() {
             const now = new Date();
-            const today = new Date(
-                now.getFullYear(),
-                now.getMonth(),
-                now.getDate(),
-                12,
-                0,
-                0,
-            );
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
             const todayStr = this.formatDateLocal(today);
             this.$emit("update:modelValue", todayStr);
             this.showCalendar = false;
@@ -269,6 +228,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 .custom-datepicker {
     position: relative;
@@ -288,13 +248,11 @@ export default {
     justify-content: space-between;
     user-select: none;
 
-    /* Темная тема */
     background: #0f172a;
     color: #f1f5f9;
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Светлая тема */
 .light-theme .datepicker-trigger {
     background: #ffffff;
     color: #1e293b;
@@ -324,7 +282,6 @@ export default {
     animation: dropdownSlide 0.2s ease;
     overflow: hidden;
 
-    /* Темная тема */
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
@@ -332,7 +289,12 @@ export default {
         0 10px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
-/* Светлая тема */
+.calendar-popup.drop-up {
+    top: auto;
+    bottom: calc(100% + 8px);
+    animation: dropdownSlideUp 0.2s ease;
+}
+
 .light-theme .calendar-popup {
     background: #ffffff;
     border: 1px solid #E6E6E6;
@@ -498,11 +460,22 @@ export default {
     }
 }
 
+@keyframes dropdownSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 600px) {
     .calendar-popup {
         width: 280px;
         left: 50%;
-        transform: translateX(-50%);
+        margin-left: -140px;
     }
 
     .day-btn {

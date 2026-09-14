@@ -14,7 +14,7 @@
             </span>
             <span class="dropdown-arrow"><i class="ri-arrow-down-s-line"></i></span>
         </div>
-        <div class="dropdown-menu" v-show="isOpen">
+        <div class="dropdown-menu" :class="{ 'drop-up': dropUp }" v-show="isOpen">
             <div
                 v-for="item in items"
                 :key="getItemValue(item)"
@@ -61,6 +61,7 @@ export default {
     data() {
         return {
             isOpen: false,
+            dropUp: false,
         };
     },
     setup() {
@@ -83,8 +84,21 @@ export default {
         getItemLabel(item) {
             return item[this.labelKey];
         },
+        // Решаем, куда раскрыться: вниз или вверх
+        updateDirection() {
+            const el = this.$el;
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const MENU_HEIGHT = 280; // max-height меню
+            const GAP = 8;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            this.dropUp =
+                spaceBelow < MENU_HEIGHT + GAP + 16 && spaceAbove > spaceBelow;
+        },
         toggle() {
             if (this.disabled) return;
+            if (!this.isOpen) this.updateDirection();
             this.isOpen = !this.isOpen;
         },
         close() {
@@ -118,13 +132,11 @@ export default {
     justify-content: space-between;
     user-select: none;
 
-    /* Темная тема */
     background: #0f172a;
     color: #f1f5f9;
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Светлая тема */
 .light-theme .dropdown-trigger {
     background: #ffffff;
     color: #1e293b;
@@ -169,7 +181,6 @@ export default {
     z-index: 100;
     animation: dropdownSlide 0.2s ease;
 
-    /* Темная тема */
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
@@ -177,7 +188,13 @@ export default {
         0 10px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
-/* Светлая тема */
+/* Раскрытие ВВЕРХ, когда внизу нет места */
+.dropdown-menu.drop-up {
+    top: auto;
+    bottom: calc(100% + 8px);
+    animation: dropdownSlideUp 0.2s ease;
+}
+
 .light-theme .dropdown-menu {
     background: #ffffff;
     border: 1px solid #E6E6E6;
@@ -222,6 +239,17 @@ export default {
     from {
         opacity: 0;
         transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dropdownSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
