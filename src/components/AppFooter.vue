@@ -12,13 +12,13 @@
             </a>
             <span class="divider" :class="{ 'light-theme': isLight }">•</span>
             <a
-                href="https://github.com/Bircoder432/webosa"
+                href="https://storozhiloff.ru"
                 target="_blank"
                 class="footer-link"
                 :class="{ 'light-theme': isLight }"
             >
                 <span class="link-icon"><i class="ri-computer-line"></i></span>
-                GitHub
+                Разработчик
             </a>
             <span class="divider" :class="{ 'light-theme': isLight }">•</span>
             <a

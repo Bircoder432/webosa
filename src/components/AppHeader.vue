@@ -4,7 +4,7 @@
             <div class="logo-icon">
                 <img src="/favicon.svg" alt="Логотип" />
             </div>
-            <h1>Расписание ТКПСТ</h1>
+            <h1>Расписания ТКПСТ</h1>
         </div>
     </header>
 </template>
