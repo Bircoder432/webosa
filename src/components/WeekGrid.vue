@@ -690,7 +690,12 @@ export default {
 .day-slide-enter-from { opacity: 0; transform: translateX(24px); }
 .day-slide-leave-to { opacity: 0; transform: translateX(-24px); }
 
-.zoomed-view { animation: fadeIn 0.3s ease; }
+.zoomed-view {
+    animation: fadeIn 0.3s ease;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .back-btn {
     margin-bottom: 20px;
