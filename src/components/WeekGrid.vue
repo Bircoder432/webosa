@@ -11,7 +11,7 @@
                 <ScheduleCard
                     :lessons="zoomedDay.lessons"
                     :groupName="`${getFullDayName(zoomedDay.date)}, ${zoomedDay.formattedDate}`"
-                    :date="weekRangeText"
+                    :date="zoomedDay.formattedDate"
                     :disableAnimation="disableAnimation"
                 />
             </div>
@@ -315,8 +315,8 @@ export default {
                     lessonCopy.displayOrder = "КЧ";
                 } else if (isMonday) {
                     let kchCountBefore = 0;
-                    if (originalOrder > 1) kchCountBefore++; // КЧ №1
-                    if (originalOrder > 5) kchCountBefore++; // КЧ №5
+                    if (originalOrder > 1) kchCountBefore++;
+                    if (originalOrder > 5) kchCountBefore++;
                     lessonCopy.displayOrder = originalOrder - kchCountBefore;
                 } else {
                     lessonCopy.displayOrder = originalOrder;
