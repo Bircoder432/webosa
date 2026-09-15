@@ -71,7 +71,7 @@
                         <div class="day-column-body">
                             <template v-if="currentDay.lessons.length > 0">
                                 <template
-                                    v-for="(item, idx) in getScheduleWithGaps(currentDay.lessons)"
+                                    v-for="(item, idx) in getScheduleWithGaps(currentDay.lessons, currentDay.date)"
                                     :key="idx"
                                 >
                                     <LessonCard
@@ -174,7 +174,7 @@
                             <div class="day-column-body">
                                 <template v-if="day.lessons.length > 0">
                                     <template
-                                        v-for="(item, idx) in getScheduleWithGaps(day.lessons)"
+                                        v-for="(item, idx) in getScheduleWithGaps(day.lessons, day.date)"
                                         :key="idx"
                                     >
                                         <LessonCard
@@ -297,11 +297,33 @@ export default {
             if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) return few;
             return many;
         },
-        getScheduleWithGaps(lessons) {
+        getScheduleWithGaps(lessons, dateStr) {
             const result = [];
-            const sorted = [...lessons].sort((a, b) => a.order - b.order);
+            const sorted = [...lessons].sort((a, b) => Number(a.order) - Number(b.order));
+
+            let isMonday = false;
+            if (dateStr) {
+                const [y, m, d] = dateStr.split('-').map(Number);
+                isMonday = new Date(y, m - 1, d).getDay() === 1;
+            }
+
             sorted.forEach((lesson, index) => {
-                result.push({ type: "lesson", data: lesson, index });
+                const lessonCopy = { ...lesson };
+                const originalOrder = Number(lesson.order);
+
+                if (isMonday && (originalOrder === 1 || originalOrder === 5)) {
+                    lessonCopy.displayOrder = "КЧ";
+                } else if (isMonday) {
+                    let kchCountBefore = 0;
+                    if (originalOrder > 1) kchCountBefore++; // КЧ №1
+                    if (originalOrder > 5) kchCountBefore++; // КЧ №5
+                    lessonCopy.displayOrder = originalOrder - kchCountBefore;
+                } else {
+                    lessonCopy.displayOrder = originalOrder;
+                }
+
+                result.push({ type: "lesson", data: lessonCopy, index });
+
                 if (index < sorted.length - 1) {
                     const next = sorted[index + 1];
                     const dur = this.getBreakDuration(lesson.endTime, next.startTime);

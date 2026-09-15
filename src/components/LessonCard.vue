@@ -5,13 +5,17 @@
         :style="{ animationDelay: disableAnimation ? '0s' : `${index * 0.1}s` }"
     >
         <div v-if="!compact" class="lesson-number">
-            <span class="number">{{ lesson.order }}</span>
+            <span class="number" :class="{ 'is-kch': lesson.displayOrder === 'КЧ' }">
+                {{ lesson.displayOrder !== undefined ? lesson.displayOrder : lesson.order }}
+            </span>
         </div>
 
         <div class="lesson-content">
             <div class="lesson-header">
                 <div class="time-badge">
-                    <span v-if="compact" class="compact-number">{{ lesson.order }}</span>
+                    <span v-if="compact" class="compact-number" :class="{ 'is-kch': lesson.displayOrder === 'КЧ' }">
+                        {{ lesson.displayOrder !== undefined ? lesson.displayOrder : lesson.order }}
+                    </span>
                     <span class="clock-icon"><i class="ri-time-line"></i></span>
                     {{ lesson.startTime }} – {{ lesson.endTime }}
                 </div>
@@ -105,6 +109,11 @@ export default {
     box-shadow: 0 4px 15px rgba(11, 109, 172, 0.3);
 }
 
+.number.is-kch {
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
 .lesson-content {
     flex: 1;
     display: flex;
@@ -135,6 +144,11 @@ export default {
 .clock-icon { font-size: 0.9rem; }
 
 .compact-number { display: none; }
+
+.lesson-card.compact .compact-number.is-kch {
+    font-size: 0.75rem;
+    font-weight: 700;
+}
 
 .subject {
     font-size: 1.15rem;
@@ -173,7 +187,6 @@ export default {
 
 .meta-icon { font-size: 1rem; flex-shrink: 0; }
 
-/* ===== Компактный режим ===== */
 .lesson-card.compact {
     padding: 10px 12px;
     border-radius: 10px;
@@ -193,8 +206,6 @@ export default {
 
 .lesson-card.compact .clock-icon { font-size: 0.75rem; }
 
-/* Простое число вместо градиентного квадратика —
-   крупнее времени, без подложки, цвет наследует от бейджа */
 .lesson-card.compact .compact-number {
     display: inline;
     font-size: 0.85rem;
@@ -222,7 +233,6 @@ export default {
 .lesson-card.compact:hover {
     box-shadow: 0 4px 12px rgba(11, 109, 172, 0.15);
 }
-/* =============================== */
 
 @keyframes slideIn {
     to { opacity: 1; transform: translateY(0); }

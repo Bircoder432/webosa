@@ -111,12 +111,35 @@ export default {
         };
     },
     computed: {
+        isMonday() {
+            if (!this.date) return false;
+            const parts = this.date.split('.');
+            if (parts.length === 3) {
+                const [d, m, y] = parts.map(Number);
+                return new Date(y, m - 1, d).getDay() === 1;
+            }
+            return false;
+        },
         scheduleWithGaps() {
             const result = [];
-            const sortedLessons = [...this.lessons].sort((a, b) => a.order - b.order);
+            const sortedLessons = [...this.lessons].sort((a, b) => Number(a.order) - Number(b.order));
 
             sortedLessons.forEach((lesson, index) => {
-                result.push({ type: 'lesson', data: lesson, index: index });
+                const lessonCopy = { ...lesson };
+                const originalOrder = Number(lesson.order);
+
+                if (this.isMonday && (originalOrder === 1 || originalOrder === 5)) {
+                    lessonCopy.displayOrder = "КЧ";
+                } else if (this.isMonday) {
+                    let kchCountBefore = 0;
+                    if (originalOrder > 1) kchCountBefore++; // КЧ №1
+                    if (originalOrder > 5) kchCountBefore++; // КЧ №5
+                    lessonCopy.displayOrder = originalOrder - kchCountBefore;
+                } else {
+                    lessonCopy.displayOrder = originalOrder;
+                }
+
+                result.push({ type: 'lesson', data: lessonCopy, index: index });
 
                 if (index < sortedLessons.length - 1) {
                     const nextLesson = sortedLessons[index + 1];
