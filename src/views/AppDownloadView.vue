@@ -1,6 +1,16 @@
 <template>
     <div class="app-page" :class="{ 'light-theme': isLight }">
+        <button
+            class="theme-toggle"
+            :class="{ 'light-theme': isLight }"
+            :title="isLight ? 'Включить тёмную тему' : 'Включить светлую тему'"
+            @click="toggleTheme"
+        >
+            <i :class="isLight ? 'ri-moon-line' : 'ri-sun-line'"></i>
+        </button>
+
         <div class="container">
+            ...всё, что было...
             <!-- Hero -->
             <section class="card hero">
                 <div class="app-icon">
@@ -125,7 +135,17 @@ export default {
                 { icon: "ri-time-line", title: "Классные часы", text: "КЧ по понедельникам, окна и большие перемены между парами." },
                 { icon: "ri-play-circle-line", title: "Что идёт сейчас", text: "Текущая пара подсвечена с прогрессом, прошедшие — приглушены." },
                 { icon: "ri-wifi-off-line", title: "Работает офлайн", text: "Загруженное расписание доступно без интернета." },
-            ],
+          ],
+          methods: {
+              toggleTheme() {
+                  const willBeLight = !document.body.classList.contains("light");
+                  document.body.classList.toggle("light", willBeLight);
+                  try {
+                      localStorage.setItem("theme", willBeLight ? "light" : "dark");
+                  } catch (e) {
+                  }
+              },
+          },
         };
     },
     mounted() {
@@ -447,5 +467,40 @@ h1 {
     h1 {
         font-size: 1.7rem;
     }
+}
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(11, 109, 172, 0.25);
+    background: rgba(11, 109, 172, 0.15);
+    color: #21badc;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.theme-toggle.light-theme {
+    background: rgba(11, 109, 172, 0.08);
+    border-color: rgba(11, 109, 172, 0.2);
+    color: #0b6dac;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(11, 109, 172, 0.3);
+}
+
+.theme-toggle:active {
+    transform: scale(0.94);
 }
 </style>
