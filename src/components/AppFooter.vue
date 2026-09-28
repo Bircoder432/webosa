@@ -30,6 +30,11 @@
                 <span class="link-icon"><i class="ri-global-line"></i></span>
                 Сайт ТКПСТ
             </a>
+            <span class="divider" :class="{ 'light-theme': isLight }">•</span>
+            <router-link to="/app" class="footer-link" :class="{ 'light-theme': isLight }">
+                <span class="link-icon"><i class="ri-smartphone-line"></i></span>
+                Приложение
+            </router-link>
         </div>
     </footer>
 </template>

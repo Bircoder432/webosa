@@ -1,15 +1,10 @@
 <template>
-    <ScheduleView />
+    <router-view />
 </template>
 
 <script>
-import ScheduleView from "./views/ScheduleView.vue";
-
 export default {
     name: "App",
-    components: {
-        ScheduleView,
-    },
 };
 </script>
 
